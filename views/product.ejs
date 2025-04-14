@@ -1,0 +1,173 @@
+<%- include('partials/header') %>
+<div class="container mx-auto p-6 bg-white theme-<%= theme %>">
+  <!-- Search Bar -->
+  <div class="mb-6">
+    <input
+      type="text"
+      placeholder="<%= __('search_products') %>"
+      class="w-full p-3 rounded-lg border input focus:outline-none"
+    />
+  </div>
+
+  <!-- Product Details -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+    <!-- Image Section -->
+    <div>
+      <img
+        src="/images/<%= product.image && product.image !== '' ? product.image : 'default.jpg' %>"
+        alt="<%= product.name %>"
+        class="w-full h-96 object-contain rounded-lg shadow-md mb-4"
+      />
+      <div class="flex space-x-2">
+        <% let images = product.images || [product.image || 'default.jpg'] %> <%
+        images.forEach(img => { %>
+        <img
+          src="/images/<%= img && img !== '' ? img : 'default.jpg' %>"
+          alt="Thumbnail"
+          class="w-16 h-16 object-contain rounded border border-gray-200 hover:border-blue-500 cursor-pointer"
+        />
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- Info Section -->
+    <div>
+      <h1 class="text-3xl font-bold mb-2"><%= product.name %></h1>
+      <div class="flex items-center mb-2">
+        <% for (let i = 1; i <= 5; i++) { %>
+        <i
+          class="fas fa-star <%= i <= (reviews.reduce((sum, r) => sum + r.rating, 0) / (reviews.length || 1)) ? 'text-yellow-400' : 'text-gray-300' %>"
+        ></i>
+        <% } %>
+        <span class="ml-2 text-sm"
+          >(<%= reviews.length %> <%= __('reviews') %>)</span
+        >
+      </div>
+      <p class="text-2xl font-semibold discount-price mb-2">
+        <%= product.discount ? product.discount.price : product.price %> USD <%
+        if (product.discount) { %>
+        <span class="strikethrough text-lg"><%= product.price %> USD</span>
+        <% } %>
+      </p>
+      <p class="mb-2"><%= __('stock') %>: <%= product.availableStock || 0 %></p>
+      <p class="mb-4"><%= __('category') %>: <%= product.category %></p>
+      <p class="mb-4"><%= product.description || __('no_description') %></p>
+      <form
+        action="/cart/add"
+        method="POST"
+        class="flex items-center space-x-4 mb-4"
+      >
+        <input type="hidden" name="productId" value="<%= product.id %>" />
+        <input
+          type="number"
+          name="quantity"
+          value="1"
+          min="1"
+          max="<%= product.availableStock || 10 %>"
+          class="w-20 p-2 border rounded input"
+        />
+        <button type="submit" class="btn-primary px-6 py-3 rounded-lg text-lg">
+          <%= __('add_to_cart') %>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Reviews Section -->
+  <div class="mb-8">
+    <h2 class="text-2xl font-bold mb-4"><%= __('reviews') %></h2>
+    <% if (reviews.length > 0) { %>
+    <div class="space-y-4">
+      <% reviews.forEach(review => { %>
+      <div class="border p-4 rounded-lg card">
+        <div class="flex items-center mb-2">
+          <span class="font-semibold"><%= review.userName %></span>
+          <span class="ml-2 text-sm"
+            ><%= new Date(review.date).toLocaleDateString() %></span
+          >
+        </div>
+        <div class="flex items-center mb-2">
+          <% for (let i = 1; i <= 5; i++) { %>
+          <i
+            class="fas fa-star <%= i <= review.rating ? 'text-yellow-400' : 'text-gray-300' %>"
+          ></i>
+          <% } %>
+        </div>
+        <p><%= review.comment %></p>
+      </div>
+      <% }) %>
+    </div>
+    <% } else { %>
+    <p class="text-gray-500"><%= __('no_reviews') %></p>
+    <% } %>
+
+    <!-- Review Form -->
+    <% if (session.user) { %>
+    <div class="mt-6 p-6 rounded-lg card">
+      <h3 class="text-xl font-semibold mb-4"><%= __('write_review') %></h3>
+      <form
+        action="/product/<%= product.id %>/review"
+        method="POST"
+        class="space-y-4"
+      >
+        <div>
+          <label for="rating" class="block font-medium"
+            ><%= __('rating') %></label
+          >
+          <select
+            name="rating"
+            id="rating"
+            class="w-full p-2 border rounded input"
+            required
+          >
+            <option value="1">1 Star</option>
+            <option value="2">2 Stars</option>
+            <option value="3">3 Stars</option>
+            <option value="4">4 Stars</option>
+            <option value="5">5 Stars</option>
+          </select>
+        </div>
+        <div>
+          <label for="comment" class="block font-medium"
+            ><%= __('comment') %></label
+          >
+          <textarea
+            name="comment"
+            id="comment"
+            rows="4"
+            class="w-full p-2 border rounded input"
+            required
+          ></textarea>
+        </div>
+        <button type="submit" class="btn-primary px-6 py-2 rounded-lg">
+          <%= __('submit_review') %>
+        </button>
+      </form>
+    </div>
+    <% } else { %>
+    <p class="text-gray-500 mt-4"><%= __('login_to_review') %></p>
+    <% } %>
+  </div>
+
+  <!-- Related Products -->
+  <div>
+    <h2 class="text-2xl font-bold mb-4"><%= __('related_products') %></h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+      <% relatedProducts.forEach(p => { %>
+      <a
+        href="/product/<%= p.id %>"
+        class="border p-4 rounded-lg hover:shadow-md card"
+      >
+        <img
+          src="/images/<%= p.image && p.image !== '' ? p.image : 'default.jpg' %>"
+          alt="<%= p.name %>"
+          class="w-full h-40 object-contain rounded mb-2"
+        />
+        <h3 class="text-lg font-semibold truncate"><%= p.name %></h3>
+        <p class="discount-price font-medium"><%= p.price %> USD</p>
+      </a>
+      <% }) %>
+    </div>
+  </div>
+</div>
+<%- include('partials/footer') %>

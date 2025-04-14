@@ -1,0 +1,44 @@
+<%- include('../partials/header') %>
+<div class="max-w-md mx-auto py-12">
+  <h1 class="text-3xl font-bold mb-8 flex items-center justify-center">
+    <i class="fas fa-sign-in-alt mr-2"></i> <%= __('title_admin_login') %>
+  </h1>
+  <% if (error) { %>
+  <p class="text-red-600 bg-red-100 p-4 rounded-lg mb-6 flex items-center">
+    <i class="fas fa-exclamation-circle mr-2"></i> <%= error %>
+  </p>
+  <% } %>
+  <form action="/admin/login" method="POST" class="space-y-6">
+    <div>
+      <label for="username" class="block font-medium mb-1 flex items-center">
+        <i class="fas fa-user mr-1"></i> <%= __('username') %>
+      </label>
+      <input
+        type="text"
+        id="username"
+        name="username"
+        class="w-full p-3 input rounded-lg"
+        required
+      />
+    </div>
+    <div>
+      <label for="password" class="block font-medium mb-1 flex items-center">
+        <i class="fas fa-lock mr-1"></i> <%= __('password') %>
+      </label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        class="w-full p-3 input rounded-lg"
+        required
+      />
+    </div>
+    <button
+      type="submit"
+      class="w-full btn-primary p-4 rounded-lg font-semibold flex items-center justify-center"
+    >
+      <i class="fas fa-sign-in-alt mr-2"></i> <%= __('login') %>
+    </button>
+  </form>
+</div>
+<%- include('../partials/footer') %>

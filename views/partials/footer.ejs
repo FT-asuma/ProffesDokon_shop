@@ -1,0 +1,31 @@
+<footer class="bg-gray-800 theme-<%= theme %> text-white py-6">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div>
+          <h3 class="text-lg font-semibold mb-4">ShopIsh</h3>
+          <p class="text-gray-400"><%= __('footer_about') %></p>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4"><%= __('footer_links') %></h3>
+          <ul class="space-y-2">
+            <li><a href="/" class="hover:underline"><%= __('title_catalog') %></a></li>
+            <li><a href="/cart" class="hover:underline"><%= __('title_cart') %></a></li>
+            <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
+              <li><a href="/admin/dashboard" class="hover:underline"><%= __('title_admin_panel') %></a></li>
+            <% } %>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4"><%= __('footer_contact') %></h3>
+          <p class="text-gray-400">Email: support@shopish.com</p>
+          <p class="text-gray-400">Phone: +1 234 567 890</p>
+        </div>
+      </div>
+      <div class="mt-6 text-center text-gray-400">
+        <p>© 2025 ShopIsh. <%= __('footer_rights') %></p>
+      </div>
+    </div>
+  </footer>
+  </main>
+  </body>
+  </html>

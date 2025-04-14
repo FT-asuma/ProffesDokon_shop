@@ -1,0 +1,57 @@
+<%- include('../partials/header') %>
+<div class="container mx-auto p-6 bg-white theme-<%= theme %>">
+  <h1 class="text-3xl font-bold mb-6 flex items-center">
+    <i class="fas fa-tachometer-alt mr-2 text-blue-500"></i> <%= title %>
+  </h1>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
+    <div class="card p-4 rounded-lg shadow-md">
+      <p class="text-sm text-gray-400"><%= __('products') %></p>
+      <p class="text-2xl font-bold"><%= products.length %></p>
+    </div>
+    <div class="card p-4 rounded-lg shadow-md">
+      <p class="text-sm text-gray-400"><%= __('users') %></p>
+      <p class="text-2xl font-bold"><%= users.length %></p>
+    </div>
+  </div>
+  <h2 class="text-2xl font-semibold mb-4"><%= __('manage_products') %></h2>
+  <div class="card p-6 rounded-lg shadow-md">
+    <table class="w-full">
+      <thead>
+        <tr class="border-b">
+          <th class="p-2 text-left"><%= __('product_name') %></th>
+          <th class="p-2 text-left"><%= __('category') %></th>
+          <th class="p-2 text-left"><%= __('price') %></th>
+          <th class="p-2 text-left"><%= __('stock') %></th>
+          <th class="p-2 text-left"><%= __('actions') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% products.forEach(product => { %>
+        <tr class="border-b">
+          <td class="p-2"><%= product.name %></td>
+          <td class="p-2"><%= product.category %></td>
+          <td class="p-2">$<%= product.price.toFixed(2) %></td>
+          <td class="p-2"><%= product.availableStock %></td>
+          <td class="p-2">
+            <a
+              href="/admin/edit/<%= product.id %>"
+              class="text-blue-500 hover:underline"
+              ><%= __('edit') %></a
+            >
+            <form
+              action="/admin/delete/<%= product.id %>"
+              method="POST"
+              class="inline"
+            >
+              <button type="submit" class="text-red-500 hover:underline ml-2">
+                <%= __('delete') %>
+              </button>
+            </form>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/footer') %>

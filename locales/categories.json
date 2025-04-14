@@ -1,0 +1,352 @@
+{
+  "Gas Stoves": {
+    "en": "Gas Stoves",
+    "uz": "Gaz Plitalari",
+    "ru": "Газовые Плиты"
+  },
+  "Electric Stoves": {
+    "en": "Electric Stoves",
+    "uz": "Elektr Plitalari",
+    "ru": "Электрические Плиты"
+  },
+  "Refrigerators": {
+    "en": "Refrigerators",
+    "uz": "Muzlatgichlar",
+    "ru": "Холодильники"
+  },
+  "Freezers": {
+    "en": "Freezers",
+    "uz": "Muzlatgich Kameralar",
+    "ru": "Морозильники"
+  },
+  "Microwaves": {
+    "en": "Microwaves",
+    "uz": "Mikroto'lqinli Pechlar",
+    "ru": "Микроволновки"
+  },
+  "Ovens": {
+    "en": "Ovens",
+    "uz": "Duxovkalar",
+    "ru": "Духовки"
+  },
+  "Bread Makers": {
+    "en": "Bread Makers",
+    "uz": "Non Pishirgichlar",
+    "ru": "Хлебопечки"
+  },
+  "Toasters": {
+    "en": "Toasters",
+    "uz": "Tosterlar",
+    "ru": "Тостеры"
+  },
+  "Popcorn Machines": {
+    "en": "Popcorn Machines",
+    "uz": "Popkorn Mashinalari",
+    "ru": "Машины для Попкорна"
+  },
+  "Lavash Makers": {
+    "en": "Lavash Makers",
+    "uz": "Lavash Pishirgichlar",
+    "ru": "Машины для Лаваша"
+  },
+  "Noodle Cookers": {
+    "en": "Noodle Cookers",
+    "uz": "Ugra Pishirgichlar",
+    "ru": "Машины для Лапши"
+  },
+  "Grills": {
+    "en": "Grills",
+    "uz": "Grillar",
+    "ru": "Грили"
+  },
+  "Fryers": {
+    "en": "Fryers",
+    "uz": "Qovurish Moslamalari",
+    "ru": "Фритюрницы"
+  },
+  "Blenders": {
+    "en": "Blenders",
+    "uz": "Blenderlar",
+    "ru": "Блендеры"
+  },
+  "Mixers": {
+    "en": "Mixers",
+    "uz": "Mikserlar",
+    "ru": "Миксеры"
+  },
+  "Coffee Machines": {
+    "en": "Coffee Machines",
+    "uz": "Qahva Mashinalari",
+    "ru": "Кофемашины"
+  },
+  "Espresso Machines": {
+    "en": "Espresso Machines",
+    "uz": "Espresso Mashinalari",
+    "ru": "Эспрессо Машины"
+  },
+  "Juicers": {
+    "en": "Juicers",
+    "uz": "Sharbat Chiqargichlar",
+    "ru": "Соковыжималки"
+  },
+  "Food Processors": {
+    "en": "Food Processors",
+    "uz": "Oziq-ovqat Protsessorlari",
+    "ru": "Кухонные Комбайны"
+  },
+  "Dishwashers": {
+    "en": "Dishwashers",
+    "uz": "Idish Yuvgichlar",
+    "ru": "Посудомоечные Машины"
+  },
+  "Water Heaters": {
+    "en": "Water Heaters",
+    "uz": "Suv Isitgichlari",
+    "ru": "Водонагреватели"
+  },
+  "Air Fryers": {
+    "en": "Air Fryers",
+    "uz": "Havo Qovurish Moslamalari",
+    "ru": "Аэрогрили"
+  },
+  "Slow Cookers": {
+    "en": "Slow Cookers",
+    "uz": "Sekin Pishirgichlar",
+    "ru": "Мультиварки"
+  },
+  "Pressure Cookers": {
+    "en": "Pressure Cookers",
+    "uz": "Bosimli Pishirgichlar",
+    "ru": "Скороварки"
+  },
+  "Rice Cookers": {
+    "en": "Rice Cookers",
+    "uz": "Guruch Pishirgichlar",
+    "ru": "Рисоварки"
+  },
+  "Kitchen Hoods": {
+    "en": "Kitchen Hoods",
+    "uz": "Oshxona Shamollatgichlari",
+    "ru": "Кухонные Вытяжки"
+  },
+  "Sinks": {
+    "en": "Sinks",
+    "uz": "Rakovinalar",
+    "ru": "Раковины"
+  },
+  "Taps": {
+    "en": "Taps",
+    "uz": "Kranlar",
+    "ru": "Краны"
+  },
+  "Cutting Machines": {
+    "en": "Cutting Machines",
+    "uz": "Kesish Mashinalari",
+    "ru": "Режущие Машины"
+  },
+  "Meat Grinders": {
+    "en": "Meat Grinders",
+    "uz": "Go'sht Maydalagichlar",
+    "ru": "Мясорубки"
+  },
+  "Ice Makers": {
+    "en": "Ice Makers",
+    "uz": "Muz Tayyorlagichlar",
+    "ru": "Льдогенераторы"
+  },
+  "Coolers": {
+    "en": "Coolers",
+    "uz": "Sovutgichlar",
+    "ru": "Охладители"
+  },
+  "Display Fridges": {
+    "en": "Display Fridges",
+    "uz": "Namoyish Muzlatgichlari",
+    "ru": "Витринные Холодильники"
+  },
+  "Wine Coolers": {
+    "en": "Wine Coolers",
+    "uz": "Vino Sovutgichlari",
+    "ru": "Винные Охладители"
+  },
+  "Bar Equipment": {
+    "en": "Bar Equipment",
+    "uz": "Bar Jihozlari",
+    "ru": "Барное Оборудование"
+  },
+  "Pizza Ovens": {
+    "en": "Pizza Ovens",
+    "uz": "Pitsa Duxovkalari",
+    "ru": "Печи для Пиццы"
+  },
+  "Pasta Makers": {
+    "en": "Pasta Makers",
+    "uz": "Makaron Tayyorlagichlar",
+    "ru": "Машины для Пасты"
+  },
+  "Waffle Makers": {
+    "en": "Waffle Makers",
+    "uz": "Vafli Pishirgichlar",
+    "ru": "Вафельницы"
+  },
+  "Crepe Makers": {
+    "en": "Crepe Makers",
+    "uz": "Krep Pishirgichlar",
+    "ru": "Блинницы"
+  },
+  "Sandwich Makers": {
+    "en": "Sandwich Makers",
+    "uz": "Sendvich Pishirgichlar",
+    "ru": "Сэндвичницы"
+  },
+  "Hot Plates": {
+    "en": "Hot Plates",
+    "uz": "Issiq Plitalar",
+    "ru": "Горячие Плиты"
+  },
+  "Steamers": {
+    "en": "Steamers",
+    "uz": "Bug'lash Moslamalari",
+    "ru": "Пароварки"
+  },
+  "Sous Vide": {
+    "en": "Sous Vide",
+    "uz": "Su-Vid",
+    "ru": "Су-Вид"
+  },
+  "Vacuum Sealers": {
+    "en": "Vacuum Sealers",
+    "uz": "Vakuum Muhrlagichlar",
+    "ru": "Вакуумные Упаковщики"
+  },
+  "Food Warmers": {
+    "en": "Food Warmers",
+    "uz": "Oziq-ovqat Isitgichlari",
+    "ru": "Подогреватели Еды"
+  },
+  "Catering Equipment": {
+    "en": "Catering Equipment",
+    "uz": "Ovqatlanish Jihozlari",
+    "ru": "Оборудование для Кейтеринга"
+  },
+  "Bakery Ovens": {
+    "en": "Bakery Ovens",
+    "uz": "Nonvoyxona Duxovkalari",
+    "ru": "Пекарские Печи"
+  },
+  "Pastry Display": {
+    "en": "Pastry Display",
+    "uz": "Qandolat Namoyishi",
+    "ru": "Витрины для Кондитерских Изделий"
+  },
+  "Cake Mixers": {
+    "en": "Cake Mixers",
+    "uz": "Tort Mikserlar",
+    "ru": "Миксеры для Торта"
+  },
+  "Dough Kneaders": {
+    "en": "Dough Kneaders",
+    "uz": "Xamir Yo'g'uruvchilar",
+    "ru": "Тестомесы"
+  },
+  "Ventilation Systems": {
+    "en": "Ventilation Systems",
+    "uz": "Shamollatish Tizimlari",
+    "ru": "Системы Вентиляции"
+  },
+  "Exhaust Fans": {
+    "en": "Exhaust Fans",
+    "uz": "Chiqindi Ventilyatorlar",
+    "ru": "Вытяжные Вентиляторы"
+  },
+  "Storage Units": {
+    "en": "Storage Units",
+    "uz": "Saqlash Bo'linmalari",
+    "ru": "Складские Единицы"
+  },
+  "Shelving": {
+    "en": "Shelving",
+    "uz": "Tokchalar",
+    "ru": "Стеллажи"
+  },
+  "Worktables": {
+    "en": "Worktables",
+    "uz": "Ish Stollari",
+    "ru": "Рабочие Столы"
+  },
+  "Cleaning Equipment": {
+    "en": "Cleaning Equipment",
+    "uz": "Tozalash Jihozlari",
+    "ru": "Оборудование для Уборки"
+  },
+  "Trash Compactors": {
+    "en": "Trash Compactors",
+    "uz": "Axlat Siqish Mashinalari",
+    "ru": "Мусорные Уплотнители"
+  },
+  "Waste Disposals": {
+    "en": "Waste Disposals",
+    "uz": "Chiqindi Utilizatsiyasi",
+    "ru": "Утилизаторы Отходов"
+  },
+  "Sanitizers": {
+    "en": "Sanitizers",
+    "uz": "Sanitayzerlar",
+    "ru": "Санитайзеры"
+  },
+  "Sterilizers": {
+    "en": "Sterilizers",
+    "uz": "Sterilizatorlar",
+    "ru": "Стерилизаторы"
+  },
+  "Smart Appliances": {
+    "en": "Smart Appliances",
+    "uz": "Aqlli Uskunalar",
+    "ru": "Умные Приборы"
+  },
+  "Solar-Powered Gear": {
+    "en": "Solar-Powered Gear",
+    "uz": "Quyosh Energiyali Uskunalar",
+    "ru": "Оборудование на Солнечной Энергии"
+  },
+  "Portable Cookers": {
+    "en": "Portable Cookers",
+    "uz": "Ko'chma Pishirgichlar",
+    "ru": "Портативные Плиты"
+  },
+  "Camping Stoves": {
+    "en": "Camping Stoves",
+    "uz": "Lager Plitalari",
+    "ru": "Походные Плиты"
+  },
+  "BBQ Grills": {
+    "en": "BBQ Grills",
+    "uz": "Barbekyu Grillar",
+    "ru": "Грили для Барбекю"
+  },
+  "Vending Machines": {
+    "en": "Vending Machines",
+    "uz": "Savdo Avtomatlari",
+    "ru": "Торговые Автоматы"
+  },
+  "Snack Dispensers": {
+    "en": "Snack Dispensers",
+    "uz": "Yengil Ovqat Avtomatlari",
+    "ru": "Диспенсеры для Закусок"
+  },
+  "Beverage Coolers": {
+    "en": "Beverage Coolers",
+    "uz": "Ichimlik Sovutgichlari",
+    "ru": "Охладители Напитков"
+  },
+  "Kiosk Equipment": {
+    "en": "Kiosk Equipment",
+    "uz": "Kiosk Jihozlari",
+    "ru": "Оборудование для Киосков"
+  },
+  "Food Trucks": {
+    "en": "Food Trucks",
+    "uz": "Oziq-ovqat Yuk Mashinalari",
+    "ru": "Фудтраки"
+  }
+}

@@ -1,0 +1,19 @@
+<% if (reviews && reviews.length > 0) { %>
+<div class="space-y-4">
+  <% reviews.forEach(review => { %>
+  <div class="bg-base-200 p-4 rounded-lg shadow">
+    <p class="text-gray-400 mb-2">Product: <%= review.productName %></p>
+    <div class="flex items-center mb-2">
+      <% for(let i = 0; i < 5; i++) { %>
+      <i
+        class="fas fa-star <%= i < review.rating ? 'text-yellow-400' : 'text-gray-300' %>"
+      ></i>
+      <% } %>
+    </div>
+    <p class="text-gray-300"><%= review.comment %></p>
+  </div>
+  <% }) %>
+</div>
+<% } else { %>
+<p class="text-gray-400"><%= __('no_reviews') %></p>
+<% } %>

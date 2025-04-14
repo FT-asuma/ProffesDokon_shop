@@ -1,0 +1,3358 @@
+Directory: C:\Users\user\Pictures\U's pc-build\ProffesDokon
+  File: .env
+    Content:
+      PORT=3000
+      SESSION_SECRET=86dd82aa3cd73cf2b8ba7c57c33624402fdddcd5ee9c716f9643ca62c71314c1
+      IMGBB_API_KEY=b5b7a58d6a3224b37b2ce4a2226b7780
+      GOOGLE_CLIENT_ID=50790822024-11534v2aajmclg3klprphfn3gdm04tiq.apps.googleusercontent.com
+      GOOGLE_CLIENT_SECRET=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
+------------------------------
+  File: database.json
+    Content:
+      {
+        "products": [
+          {},
+          {
+            "id": 2,
+            "name": "NOODLE COOKER",
+            "category": "Noodle Cookers",
+            "price": 450,
+            "currency": "USD",
+            "availableStock": 25,
+            "description": "This noodle cooker is 90 yrs old we're short of money these days so we couldn't wait until we would celebrate its 100 yrs old jubilee and it still hutrs",
+            "image": "https://i.ibb.co/jkL5m4mh/a38f49b503df.png",
+            "images": ["https://i.ibb.co/jkL5m4mh/a38f49b503df.png"],
+            "discount": {
+              "price": 420,
+              "endDate": "2025-04-17T12:55:25.453Z"
+            },
+            "seller": {
+              "name": "Proffes Dokon Oficials",
+              "phone": "+998999879742",
+              "telegram": "@nothing",
+              "contactUrl": "idk"
+            },
+            "specifications": {
+              "kilowatts": 250,
+              "madeIn": "China",
+              "details": {
+                "Addition": "2nd hand"
+              }
+            },
+            "rating": 5.0
+          }
+        ],
+        "orders": [],
+        "users": [
+          {
+            "id": 1,
+            "username": "admin001",
+            "password": "admin_pass",
+            "role": "admin"
+          },
+          {
+            "id": 2,
+            "googleId": "111987115029041087440",
+            "name": "Ubaydulloh Sayfullayev",
+            "email": "royaleyourdad@gmail.com",
+            "picture": "https://lh3.googleusercontent.com/a/ACg8ocJSIewHTFdmx5_ppzCoFwJjZ3Tq-iCq3yUnAXenVWRBibsYApQ=s96-c",
+            "role": "user"
+          }
+        ],
+        "reviews": [
+          {},
+          {
+            "id": 2,
+            "productId": 2,
+            "userId": 2,
+            "userName": "Ubaydulloh Sayfullayev",
+            "rating": 5,
+            "comment": "hate it but sad backstory",
+            "date": "2025-04-14T12:58:27.735Z"
+          }
+        ]
+      }
+------------------------------
+  File: package.json
+    Content:
+      {
+        "dependencies": {
+          "axios": "^1.8.4",
+          "dotenv": "^16.5.0",
+          "ejs": "^3.1.10",
+          "express": "^5.1.0",
+          "express-session": "^1.18.1",
+          "FormData": "^0.10.1",
+          "google-auth-library": "^9.15.1",
+          "i18n": "^0.15.1",
+          "multer": "^1.4.5-lts.2",
+          "sharp": "^0.34.1"
+        }
+      }
+------------------------------
+  File: server.js
+    Content:
+      const express = require("express");
+      const session = require("express-session");
+      const path = require("path");
+      const customerRoutes = require("./routes/customer");
+      const adminRoutes = require("./routes/admin");
+      
+      const app = express();
+      
+      // Middleware
+      app.use(express.urlencoded({ extended: true }));
+      app.use(express.json());
+      app.use(express.static(path.join(__dirname, "public")));
+      app.set("view engine", "ejs");
+      app.set("views", path.join(__dirname, "views"));
+      
+      // Session
+      app.use(
+        session({
+          secret: process.env.SESSION_SECRET || "your-secret-key",
+          resave: false,
+          saveUninitialized: false,
+          cookie: { secure: process.env.NODE_ENV === "production" },
+        })
+      );
+      
+      // Theme middleware
+      app.use((req, res, next) => {
+        req.session.theme = req.session.theme || "light";
+        next();
+      });
+      
+      // Routes
+      app.use("/", customerRoutes);
+      app.use("/admin", adminRoutes);
+      
+      app.post("/theme", (req, res) => {
+        req.session.theme = req.body.theme || "light";
+        res.json({ success: true });
+      });
+      
+      // Start server
+      const PORT = process.env.PORT || 3000;
+      app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+      });
+==================================================
+
+Directory: C:\Users\user\Pictures\U's pc-build\ProffesDokon\locales
+  File: categories.json
+    Content:
+      {
+        "Gas Stoves": {
+          "en": "Gas Stoves",
+          "uz": "Gaz Plitalari",
+          "ru": "Газовые Плиты"
+        },
+        "Electric Stoves": {
+          "en": "Electric Stoves",
+          "uz": "Elektr Plitalari",
+          "ru": "Электрические Плиты"
+        },
+        "Refrigerators": {
+          "en": "Refrigerators",
+          "uz": "Muzlatgichlar",
+          "ru": "Холодильники"
+        },
+        "Freezers": {
+          "en": "Freezers",
+          "uz": "Muzlatgich Kameralar",
+          "ru": "Морозильники"
+        },
+        "Microwaves": {
+          "en": "Microwaves",
+          "uz": "Mikroto'lqinli Pechlar",
+          "ru": "Микроволновки"
+        },
+        "Ovens": {
+          "en": "Ovens",
+          "uz": "Duxovkalar",
+          "ru": "Духовки"
+        },
+        "Bread Makers": {
+          "en": "Bread Makers",
+          "uz": "Non Pishirgichlar",
+          "ru": "Хлебопечки"
+        },
+        "Toasters": {
+          "en": "Toasters",
+          "uz": "Tosterlar",
+          "ru": "Тостеры"
+        },
+        "Popcorn Machines": {
+          "en": "Popcorn Machines",
+          "uz": "Popkorn Mashinalari",
+          "ru": "Машины для Попкорна"
+        },
+        "Lavash Makers": {
+          "en": "Lavash Makers",
+          "uz": "Lavash Pishirgichlar",
+          "ru": "Машины для Лаваша"
+        },
+        "Noodle Cookers": {
+          "en": "Noodle Cookers",
+          "uz": "Ugra Pishirgichlar",
+          "ru": "Машины для Лапши"
+        },
+        "Grills": {
+          "en": "Grills",
+          "uz": "Grillar",
+          "ru": "Грили"
+        },
+        "Fryers": {
+          "en": "Fryers",
+          "uz": "Qovurish Moslamalari",
+          "ru": "Фритюрницы"
+        },
+        "Blenders": {
+          "en": "Blenders",
+          "uz": "Blenderlar",
+          "ru": "Блендеры"
+        },
+        "Mixers": {
+          "en": "Mixers",
+          "uz": "Mikserlar",
+          "ru": "Миксеры"
+        },
+        "Coffee Machines": {
+          "en": "Coffee Machines",
+          "uz": "Qahva Mashinalari",
+          "ru": "Кофемашины"
+        },
+        "Espresso Machines": {
+          "en": "Espresso Machines",
+          "uz": "Espresso Mashinalari",
+          "ru": "Эспрессо Машины"
+        },
+        "Juicers": {
+          "en": "Juicers",
+          "uz": "Sharbat Chiqargichlar",
+          "ru": "Соковыжималки"
+        },
+        "Food Processors": {
+          "en": "Food Processors",
+          "uz": "Oziq-ovqat Protsessorlari",
+          "ru": "Кухонные Комбайны"
+        },
+        "Dishwashers": {
+          "en": "Dishwashers",
+          "uz": "Idish Yuvgichlar",
+          "ru": "Посудомоечные Машины"
+        },
+        "Water Heaters": {
+          "en": "Water Heaters",
+          "uz": "Suv Isitgichlari",
+          "ru": "Водонагреватели"
+        },
+        "Air Fryers": {
+          "en": "Air Fryers",
+          "uz": "Havo Qovurish Moslamalari",
+          "ru": "Аэрогрили"
+        },
+        "Slow Cookers": {
+          "en": "Slow Cookers",
+          "uz": "Sekin Pishirgichlar",
+          "ru": "Мультиварки"
+        },
+        "Pressure Cookers": {
+          "en": "Pressure Cookers",
+          "uz": "Bosimli Pishirgichlar",
+          "ru": "Скороварки"
+        },
+        "Rice Cookers": {
+          "en": "Rice Cookers",
+          "uz": "Guruch Pishirgichlar",
+          "ru": "Рисоварки"
+        },
+        "Kitchen Hoods": {
+          "en": "Kitchen Hoods",
+          "uz": "Oshxona Shamollatgichlari",
+          "ru": "Кухонные Вытяжки"
+        },
+        "Sinks": {
+          "en": "Sinks",
+          "uz": "Rakovinalar",
+          "ru": "Раковины"
+        },
+        "Taps": {
+          "en": "Taps",
+          "uz": "Kranlar",
+          "ru": "Краны"
+        },
+        "Cutting Machines": {
+          "en": "Cutting Machines",
+          "uz": "Kesish Mashinalari",
+          "ru": "Режущие Машины"
+        },
+        "Meat Grinders": {
+          "en": "Meat Grinders",
+          "uz": "Go'sht Maydalagichlar",
+          "ru": "Мясорубки"
+        },
+        "Ice Makers": {
+          "en": "Ice Makers",
+          "uz": "Muz Tayyorlagichlar",
+          "ru": "Льдогенераторы"
+        },
+        "Coolers": {
+          "en": "Coolers",
+          "uz": "Sovutgichlar",
+          "ru": "Охладители"
+        },
+        "Display Fridges": {
+          "en": "Display Fridges",
+          "uz": "Namoyish Muzlatgichlari",
+          "ru": "Витринные Холодильники"
+        },
+        "Wine Coolers": {
+          "en": "Wine Coolers",
+          "uz": "Vino Sovutgichlari",
+          "ru": "Винные Охладители"
+        },
+        "Bar Equipment": {
+          "en": "Bar Equipment",
+          "uz": "Bar Jihozlari",
+          "ru": "Барное Оборудование"
+        },
+        "Pizza Ovens": {
+          "en": "Pizza Ovens",
+          "uz": "Pitsa Duxovkalari",
+          "ru": "Печи для Пиццы"
+        },
+        "Pasta Makers": {
+          "en": "Pasta Makers",
+          "uz": "Makaron Tayyorlagichlar",
+          "ru": "Машины для Пасты"
+        },
+        "Waffle Makers": {
+          "en": "Waffle Makers",
+          "uz": "Vafli Pishirgichlar",
+          "ru": "Вафельницы"
+        },
+        "Crepe Makers": {
+          "en": "Crepe Makers",
+          "uz": "Krep Pishirgichlar",
+          "ru": "Блинницы"
+        },
+        "Sandwich Makers": {
+          "en": "Sandwich Makers",
+          "uz": "Sendvich Pishirgichlar",
+          "ru": "Сэндвичницы"
+        },
+        "Hot Plates": {
+          "en": "Hot Plates",
+          "uz": "Issiq Plitalar",
+          "ru": "Горячие Плиты"
+        },
+        "Steamers": {
+          "en": "Steamers",
+          "uz": "Bug'lash Moslamalari",
+          "ru": "Пароварки"
+        },
+        "Sous Vide": {
+          "en": "Sous Vide",
+          "uz": "Su-Vid",
+          "ru": "Су-Вид"
+        },
+        "Vacuum Sealers": {
+          "en": "Vacuum Sealers",
+          "uz": "Vakuum Muhrlagichlar",
+          "ru": "Вакуумные Упаковщики"
+        },
+        "Food Warmers": {
+          "en": "Food Warmers",
+          "uz": "Oziq-ovqat Isitgichlari",
+          "ru": "Подогреватели Еды"
+        },
+        "Catering Equipment": {
+          "en": "Catering Equipment",
+          "uz": "Ovqatlanish Jihozlari",
+          "ru": "Оборудование для Кейтеринга"
+        },
+        "Bakery Ovens": {
+          "en": "Bakery Ovens",
+          "uz": "Nonvoyxona Duxovkalari",
+          "ru": "Пекарские Печи"
+        },
+        "Pastry Display": {
+          "en": "Pastry Display",
+          "uz": "Qandolat Namoyishi",
+          "ru": "Витрины для Кондитерских Изделий"
+        },
+        "Cake Mixers": {
+          "en": "Cake Mixers",
+          "uz": "Tort Mikserlar",
+          "ru": "Миксеры для Торта"
+        },
+        "Dough Kneaders": {
+          "en": "Dough Kneaders",
+          "uz": "Xamir Yo'g'uruvchilar",
+          "ru": "Тестомесы"
+        },
+        "Ventilation Systems": {
+          "en": "Ventilation Systems",
+          "uz": "Shamollatish Tizimlari",
+          "ru": "Системы Вентиляции"
+        },
+        "Exhaust Fans": {
+          "en": "Exhaust Fans",
+          "uz": "Chiqindi Ventilyatorlar",
+          "ru": "Вытяжные Вентиляторы"
+        },
+        "Storage Units": {
+          "en": "Storage Units",
+          "uz": "Saqlash Bo'linmalari",
+          "ru": "Складские Единицы"
+        },
+        "Shelving": {
+          "en": "Shelving",
+          "uz": "Tokchalar",
+          "ru": "Стеллажи"
+        },
+        "Worktables": {
+          "en": "Worktables",
+          "uz": "Ish Stollari",
+          "ru": "Рабочие Столы"
+        },
+        "Cleaning Equipment": {
+          "en": "Cleaning Equipment",
+          "uz": "Tozalash Jihozlari",
+          "ru": "Оборудование для Уборки"
+        },
+        "Trash Compactors": {
+          "en": "Trash Compactors",
+          "uz": "Axlat Siqish Mashinalari",
+          "ru": "Мусорные Уплотнители"
+        },
+        "Waste Disposals": {
+          "en": "Waste Disposals",
+          "uz": "Chiqindi Utilizatsiyasi",
+          "ru": "Утилизаторы Отходов"
+        },
+        "Sanitizers": {
+          "en": "Sanitizers",
+          "uz": "Sanitayzerlar",
+          "ru": "Санитайзеры"
+        },
+        "Sterilizers": {
+          "en": "Sterilizers",
+          "uz": "Sterilizatorlar",
+          "ru": "Стерилизаторы"
+        },
+        "Smart Appliances": {
+          "en": "Smart Appliances",
+          "uz": "Aqlli Uskunalar",
+          "ru": "Умные Приборы"
+        },
+        "Solar-Powered Gear": {
+          "en": "Solar-Powered Gear",
+          "uz": "Quyosh Energiyali Uskunalar",
+          "ru": "Оборудование на Солнечной Энергии"
+        },
+        "Portable Cookers": {
+          "en": "Portable Cookers",
+          "uz": "Ko'chma Pishirgichlar",
+          "ru": "Портативные Плиты"
+        },
+        "Camping Stoves": {
+          "en": "Camping Stoves",
+          "uz": "Lager Plitalari",
+          "ru": "Походные Плиты"
+        },
+        "BBQ Grills": {
+          "en": "BBQ Grills",
+          "uz": "Barbekyu Grillar",
+          "ru": "Грили для Барбекю"
+        },
+        "Vending Machines": {
+          "en": "Vending Machines",
+          "uz": "Savdo Avtomatlari",
+          "ru": "Торговые Автоматы"
+        },
+        "Snack Dispensers": {
+          "en": "Snack Dispensers",
+          "uz": "Yengil Ovqat Avtomatlari",
+          "ru": "Диспенсеры для Закусок"
+        },
+        "Beverage Coolers": {
+          "en": "Beverage Coolers",
+          "uz": "Ichimlik Sovutgichlari",
+          "ru": "Охладители Напитков"
+        },
+        "Kiosk Equipment": {
+          "en": "Kiosk Equipment",
+          "uz": "Kiosk Jihozlari",
+          "ru": "Оборудование для Киосков"
+        },
+        "Food Trucks": {
+          "en": "Food Trucks",
+          "uz": "Oziq-ovqat Yuk Mashinalari",
+          "ru": "Фудтраки"
+        }
+      }
+------------------------------
+  File: en.json
+    Content:
+      {
+      	"title_catalog": "Catalog",
+      	"title_cart": "Cart",
+      	"title_admin_panel": "Admin Panel",
+      	"title_admin_login": "Admin Login",
+      	"title_add_product": "Add Product",
+      	"title_edit_product": "Edit Product",
+      	"title_login": "Login",
+      	"title_account": "Account",
+      	"product_name": "Product Name",
+      	"price": "Price",
+      	"currency": "Currency",
+      	"available_stock": "Available Stock",
+      	"category": "Category",
+      	"description": "Description",
+      	"kilowatts": "Kilowatts",
+      	"made_in": "Made In",
+      	"image": "Image",
+      	"add_detail": "Add Detail",
+      	"detail_name": "Detail Name",
+      	"detail_value": "Detail Value",
+      	"add_product": "Add Product",
+      	"update_product": "Update Product",
+      	"no_products": "No products available",
+      	"invalid_credentials": "Invalid username or password",
+      	"logout": "Logout",
+      	"view": "View",
+      	"back_to_catalog": "Back to Catalog",
+      	"back_to_dashboard": "Back to Dashboard",
+      	"basic_information": "Basic Information",
+      	"additional_details": "Additional Details",
+      	"drag_drop_image": "Drag & Drop or Click to Upload Image",
+      	"specifications": "Specifications",
+      	"customer_reviews": "Customer Reviews",
+      	"add_to_cart": "Add to Cart",
+      	"contact_seller": "Contact Seller",
+      	"related_products": "Related Products",
+      	"in_stock": "In Stock",
+      	"redirecting_to_dashboard": "Redirecting to Dashboard...",
+      	"total_products": "Total Products",
+      	"categories": "Categories",
+      	"active_users": "Active Users",
+      	"active_discounts": "Active Discounts",
+      	"users": "Users",
+      	"search_products": "Search Products",
+      	"actions": "Actions",
+      	"edit": "Edit",
+      	"delete": "Delete",
+      	"confirm_delete": "Confirm Delete",
+      	"delete_product": "Delete product",
+      	"cancel": "Cancel",
+      	"username": "Username",
+      	"password": "Password",
+      	"login": "Login",
+      	"google_login": "Sign in with Google",
+      	"sign_in_with": "Sign in with",
+      	"no_description": "No description available",
+      	"no_reviews": "No reviews yet",
+      	"write_review": "Write a Review",
+      	"your_review": "Your review",
+      	"submit_review": "Submit Review",
+      	"seller_info": "Seller Information",
+      	"sold_by": "Sold by",
+      	"phone": "Phone",
+      	"telegram": "Telegram",
+      	"seller_name": "Seller Name",
+      	"seller_phone": "Seller Phone",
+      	"seller_telegram": "Seller Telegram",
+      	"seller_contact_url": "Seller Contact URL",
+      	"change_seller": "Find Another Seller",
+      	"change_seller_message": "Searching for other sellers (mock feature)",
+      	"discount": "Discount",
+      	"discount_price": "Discount Price",
+      	"discount_duration": "Discount Duration (Days)",
+      	"days": "days",
+      	"off": "OFF",
+      	"deal_ends_in": "Deal ends in",
+      	"deal_ends_soon": "Hurry! Deal ends in",
+      	"discount_ended": "Discount has ended",
+      	"day": "day",
+      	"hours": "hours",
+      	"minutes": "minutes",
+      	"reviews": "reviews",
+      	"my_reviews": "My Reviews",
+      	"enter_phone": "Enter phone number",
+      	"cart_empty": "Your cart is empty",
+      	"remove_from_cart": "Remove from cart?",
+      	"checkout": "Checkout",
+      	"all_categories": "All Categories",
+      	"all_prices": "All Prices",
+      	"price_range": "Price Range",
+      	"search": "Search",
+      	"none": "None",
+      	"all_rights_reserved": "All rights reserved",
+      	"stock": "stock",
+      	"seller": "seller",
+      	"error": "error",
+      	"role": "role",
+      	"login_to_review": "login_to_review",
+      	"product_images": "product_images",
+      	"drag_drop_images": "drag_drop_images",
+      	"create_product": "create_product",
+      	"rating": "rating",
+      	"comment": "comment",
+      	"product": "product",
+      	"quantity": "quantity",
+      	"total": "total",
+      	"footer_about": "footer_about",
+      	"footer_links": "footer_links",
+      	"footer_contact": "footer_contact",
+      	"footer_rights": "footer_rights",
+      	"products": "products",
+      	"manage_products": "manage_products"
+      }
+------------------------------
+  File: ru.json
+    Content:
+      {
+          "title_catalog": "Каталог",
+          "title_cart": "Корзина",
+          "title_admin_panel": "Панель администратора",
+          "title_admin_login": "Вход для администратора",
+          "title_add_product": "Добавить продукт",
+          "title_edit_product": "Редактировать продукт",
+          "title_login": "Вход",
+          "title_account": "Аккаунт",
+          "product_name": "Название продукта",
+          "price": "Цена",
+          "currency": "Валюта",
+          "available_stock": "Доступный запас",
+          "category": "Категория",
+          "description": "Описание",
+          "kilowatts": "Киловатты",
+          "made_in": "Сделано в",
+          "image": "Изображение",
+          "add_detail": "Добавить деталь",
+          "detail_name": "Название детали",
+          "detail_value": "Значение детали",
+          "add_product": "Добавить продукт",
+          "update_product": "Обновить продукт",
+          "no_products": "Нет доступных продуктов",
+          "invalid_credentials": "Неверное имя пользователя или пароль",
+          "logout": "Выход",
+          "view": "Просмотр",
+          "back_to_catalog": "Вернуться в каталог",
+          "back_to_dashboard": "Вернуться в панель управления",
+          "basic_information": "Основная информация",
+          "additional_details": "Дополнительные детали",
+          "drag_drop_image": "Перетащите или щелкните, чтобы загрузить изображение",
+          "specifications": "Характеристики",
+          "customer_reviews": "Отзывы клиентов",
+          "add_to_cart": "Добавить в корзину",
+          "contact_seller": "Связаться с продавцом",
+          "related_products": "Похожие товары",
+          "in_stock": "В наличии",
+          "redirecting_to_dashboard": "Перенаправление на панель управления...",
+          "total_products": "Всего продуктов",
+          "categories": "Категории",
+          "active_users": "Активные пользователи",
+          "active_discounts": "Активные скидки",
+          "users": "Пользователи",
+          "search_products": "Поиск продуктов",
+          "actions": "Действия",
+          "edit": "Редактировать",
+          "delete": "Удалить",
+          "confirm_delete": "Подтвердить удаление",
+          "delete_product": "Удалить продукт",
+          "cancel": "Отмена",
+          "username": "Имя пользователя",
+          "password": "Пароль",
+          "login": "Войти",
+          "google_login": "Войти через Google",
+          "sign_in_with": "Войти с помощью",
+          "no_description": "Описание отсутствует",
+          "no_reviews": "Отзывов пока нет",
+          "write_review": "Написать отзыв",
+          "your_review": "Ваш отзыв",
+          "submit_review": "Отправить отзыв",
+          "seller_info": "Информация о продавце",
+          "sold_by": "Продается",
+          "phone": "Телефон",
+          "telegram": "Telegram",
+          "seller_name": "Имя продавца",
+          "seller_phone": "Телефон продавца",
+          "seller_telegram": "Telegram продавца",
+          "seller_contact_url": "URL для связи с продавцом",
+          "change_seller": "Найти другого продавца",
+          "change_seller_message": "Поиск других продавцов (фиктивная функция)",
+          "discount": "Скидка",
+          "discount_price": "Цена со скидкой",
+          "discount_duration": "Продолжительность скидки (дни)",
+          "days": "дней",
+          "off": "СКИДКА",
+          "deal_ends_in": "Сделка заканчивается через",
+          "deal_ends_soon": "Поторопитесь! Сделка заканчивается через",
+          "discount_ended": "Скидка закончилась",
+          "day": "день",
+          "hours": "часов",
+          "minutes": "минут",
+          "reviews": "отзывов",
+          "my_reviews": "Мои отзывы",
+          "enter_phone": "Введите номер телефона",
+          "cart_empty": "Ваша корзина пуста",
+          "remove_from_cart": "Удалить из корзины?",
+          "checkout": "Оформить заказ",
+          "all_categories": "Все категории",
+          "all_prices": "Все цены",
+          "price_range": "Диапазон цен",
+          "search": "Поиск",
+          "none": "Нет",
+          "all_rights_reserved": "Все права защищены",
+          "stock": "запас",
+          "seller": "продавец",
+          "error": "ошибка",
+          "role": "роль",
+          "rating": "rating",
+          "comment": "comment"
+      }
+------------------------------
+  File: uz.json
+    Content:
+      {
+          "title_catalog": "Katalog",
+          "title_cart": "Savat",
+          "title_admin_panel": "Admin Paneli",
+          "title_admin_login": "Admin Kirish",
+          "title_add_product": "Mahsulot Qo'shish",
+          "title_edit_product": "Mahsulotni Tahrirlash",
+          "title_login": "Kirish",
+          "title_account": "Hisob",
+          "product_name": "Mahsulot Nomi",
+          "price": "Narx",
+          "currency": "Valyuta",
+          "available_stock": "Mavjud Zaxira",
+          "category": "Kategoriya",
+          "description": "Tavsif",
+          "kilowatts": "Kilovatt",
+          "made_in": "Ishlab Chiqarilgan",
+          "image": "Rasm",
+          "add_detail": "Tafsilot Qo'shish",
+          "detail_name": "Tafsilot Nomi",
+          "detail_value": "Tafsilot Qiymati",
+          "add_product": "Mahsulot Qo'shish",
+          "update_product": "Mahsulotni Yangilash",
+          "no_products": "Mahsulotlar mavjud emas",
+          "invalid_credentials": "Noto'g'ri foydalanuvchi nomi yoki parol",
+          "logout": "Chiqish",
+          "view": "Ko'rish",
+          "back_to_catalog": "Katalogga Qaytish",
+          "back_to_dashboard": "Boshqaruv Paneliga Qaytish",
+          "basic_information": "Asosiy Ma'lumotlar",
+          "additional_details": "Qo'shimcha Tafsilotlar",
+          "drag_drop_image": "Rasmni sudrab tashlang yoki yuklash uchun bosing",
+          "specifications": "Xususiyatlar",
+          "customer_reviews": "Mijozlar Sharhlari",
+          "add_to_cart": "Savatga Qo'shish",
+          "contact_seller": "Sotuvchi bilan Bog'lanish",
+          "related_products": "Tegishli Mahsulotlar",
+          "in_stock": "Omborda",
+          "redirecting_to_dashboard": "Boshqaruv Paneliga Yo'naltirilmoqda...",
+          "total_products": "Jami Mahsulotlar",
+          "categories": "Kategoriyalar",
+          "active_users": "Faol Foydalanuvchilar",
+          "active_discounts": "Faol Chegirmalar",
+          "users": "Foydalanuvchilar",
+          "search_products": "Mahsulotlarni Qidirish",
+          "actions": "Harakatlar",
+          "edit": "Tahrirlash",
+          "delete": "O'chirish",
+          "confirm_delete": "O'chirishni Tasdiqlash",
+          "delete_product": "Mahsulotni o'chirish",
+          "cancel": "Bekor Qilish",
+          "username": "Foydalanuvchi Nomi",
+          "password": "Parol",
+          "login": "Kirish",
+          "google_login": "Google bilan Kirish",
+          "sign_in_with": "Quyidagilar bilan kiring",
+          "no_description": "Tavsif mavjud emas",
+          "no_reviews": "Hali sharhlar yo'q",
+          "write_review": "Sharh Yozish",
+          "your_review": "Sizning sharhingiz",
+          "submit_review": "Sharhni Yuborish",
+          "seller_info": "Sotuvchi Ma'lumotlari",
+          "sold_by": "Sotuvchi",
+          "phone": "Telefon",
+          "telegram": "Telegram",
+          "seller_name": "Sotuvchi Ismi",
+          "seller_phone": "Sotuvchi Telefoni",
+          "seller_telegram": "Sotuvchi Telegrami",
+          "seller_contact_url": "Sotuvchi Bog'lanish URL",
+          "change_seller": "Boshqa Sotuvchi Topish",
+          "change_seller_message": "Boshqa sotuvchilarni qidirish (soxta xususiyat)",
+          "discount": "Chegirma",
+          "discount_price": "Chegirma Narxi",
+          "discount_duration": "Chegirma Davomiyligi (Kunlar)",
+          "days": "kun",
+          "off": "CHEGRIMA",
+          "deal_ends_in": "Bitim tugaydi",
+          "deal_ends_soon": "Tezroq! Bitim tugaydi",
+          "discount_ended": "Chegirma tugadi",
+          "day": "kun",
+          "hours": "soat",
+          "minutes": "daqiqa",
+          "reviews": "sharhlar",
+          "my_reviews": "Mening Sharhlarim",
+          "enter_phone": "Telefon raqamini kiriting",
+          "cart_empty": "Sizning savatingiz bo'sh",
+          "remove_from_cart": "Savatdan olib tashlashmi?",
+          "checkout": "To'lov",
+          "all_categories": "Barcha Kategoriyalar",
+          "all_prices": "Barcha Narxlar",
+          "price_range": "Narx Oralig'i",
+          "search": "Qidirish",
+          "none": "Yo'q",
+          "all_rights_reserved": "Barcha huquqlar himoyalangan",
+          "stock": "zaxira",
+          "seller": "sotuvchi",
+          "error": "xato",
+          "role": "rol",
+          "rating": "rating",
+          "comment": "comment",
+          "product": "product",
+          "quantity": "quantity",
+          "total": "total"
+      }
+------------------------------
+==================================================
+
+Directory: C:\Users\user\Pictures\U's pc-build\ProffesDokon\public
+==================================================
+
+Directory: C:\Users\user\Pictures\U's pc-build\ProffesDokon\public\css
+  File: theme.css
+    Content:
+      .theme-light {
+        background-color: #ffffff;
+        color: #333333;
+      }
+      
+      .theme-light .bg-white {
+        background-color: #ffffff;
+      }
+      
+      .theme-light .card {
+        background-color: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      
+      .theme-light .input {
+        background-color: #ffffff;
+        border: 1px solid #d1d5db;
+        color: #333333;
+        border-radius: 0.25rem;
+      }
+      
+      .theme-light .input::placeholder {
+        color: #6b7280;
+      }
+      
+      .theme-light .btn-primary {
+        background-color: #3b82f6;
+        color: #ffffff;
+        border-radius: 0.25rem;
+      }
+      
+      .theme-light .btn-primary:hover {
+        background-color: #2563eb;
+      }
+      
+      .theme-dark {
+        background-color: #1f2937;
+        color: #d1d5db;
+      }
+      
+      .theme-dark .bg-white {
+        background-color: #374151;
+      }
+      
+      .theme-dark .card {
+        background-color: #4b5563;
+        border: 1px solid #6b7280;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      
+      .theme-dark .input {
+        background-color: #4b5563;
+        border: 1px solid #6b7280;
+        color: #d1d5db;
+        border-radius: 0.25rem;
+      }
+      
+      .theme-dark .input::placeholder {
+        color: #9ca3af;
+      }
+      
+      .theme-dark .btn-primary {
+        background-color: #60a5fa;
+        color: #1f2937;
+        border-radius: 0.25rem;
+      }
+      
+      .theme-dark .btn-primary:hover {
+        background-color: #3b82f6;
+      }
+      
+      .container {
+        max-width: 1280px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+      
+      .p-4 {
+        padding: 1rem;
+      }
+      
+      .rounded-lg {
+        border-radius: 0.5rem;
+      }
+      
+      .shadow-md {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      }
+      
+      .flex {
+        display: flex;
+      }
+      
+      .grid {
+        display: grid;
+      }
+      
+      @media (max-width: 640px) {
+        .container {
+          padding: 0.5rem;
+        }
+        .grid-cols-2,
+        .grid-cols-3 {
+          grid-template-columns: 1fr;
+        }
+      }
+------------------------------
+==================================================
+
+Directory: C:\Users\user\Pictures\U's pc-build\ProffesDokon\public\js
+  File: script.js
+    Content:
+      // Cart
+      function addToCart(productId) {
+          fetch("/cart/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `productId=${productId}&quantity=1`,
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.success) {
+                alert("Product added to cart!");
+                window.location.href = "/cart";
+              } else {
+                alert(data.error || "Failed to add to cart.");
+              }
+            })
+            .catch((err) => console.error("Add to cart error:", err));
+        }
+        
+        function updateQuantity(productId, quantity) {
+          fetch("/cart/update", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `productId=${productId}&quantity=${quantity}`,
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.success) {
+                window.location.reload();
+              } else {
+                alert(data.error || "Failed to update quantity.");
+              }
+            })
+            .catch((err) => console.error("Update quantity error:", err));
+        }
+        
+        function removeFromCart(productId) {
+          fetch("/cart/remove", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `productId=${productId}`,
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.success) {
+                window.location.reload();
+              } else {
+                alert(data.error || "Failed to remove from cart.");
+              }
+            })
+            .catch((err) => console.error("Remove from cart error:", err));
+        }
+        
+        // Category filter and search
+        document.addEventListener("DOMContentLoaded", () => {
+          const categoryFilter = document.getElementById("category-filter");
+          const searchInput = document.getElementById("search-input");
+          const products = document.querySelectorAll(".product-item");
+        
+          if (categoryFilter) {
+            categoryFilter.addEventListener("change", () => {
+              const selectedCategory = categoryFilter.value;
+              products.forEach((product) => {
+                const productCategory = product.dataset.category;
+                product.style.display =
+                  selectedCategory === "" || productCategory === selectedCategory ? "block" : "none";
+              });
+            });
+          }
+        
+          if (searchInput) {
+            searchInput.addEventListener("input", () => {
+              const query = searchInput.value.toLowerCase();
+              products.forEach((product) => {
+                const name = product.querySelector("h3").textContent.toLowerCase();
+                product.style.display = name.includes(query) ? "block" : "none";
+              });
+            });
+          }
+        });
+        
+        // Theme toggle
+        function toggleTheme() {
+          const currentTheme = document.body.classList.contains("theme-dark") ? "dark" : "light";
+          const newTheme = currentTheme === "light" ? "dark" : "light";
+          document.body.classList.remove(`theme-${currentTheme}`);
+          document.body.classList.add(`theme-${newTheme}`);
+          fetch("/theme", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `theme=${newTheme}`,
+          });
+        }
+------------------------------
+==================================================
+
+Directory: C:\Users\user\Pictures\U's pc-build\ProffesDokon\routes
+  File: admin.js
+    Content:
+      const express = require("express");
+      const fs = require("fs").promises;
+      const path = require("path");
+      const axios = require("axios");
+      const router = express.Router();
+      
+      const dbPath = path.join(__dirname, "../database.json");
+      const readDB = async () => JSON.parse(await fs.readFile(dbPath, "utf8"));
+      const writeDB = async (data) =>
+        await fs.writeFile(dbPath, JSON.stringify(data, null, 2));
+      
+      const IMGBB_API_KEY =
+        process.env.IMGBB_API_KEY || "b5b7a58d6a3224b37b2ce4a2226b7780";
+      
+      const isAuthenticated = (req, res, next) => {
+        if (!req.session.user || req.session.user.role !== "admin") {
+          return res.redirect("/admin/login");
+        }
+        next();
+      };
+      router.use((req, res, next) => {
+        if (!req.session.user || req.session.user.role !== "admin") {
+          return res.redirect("/admin/login");
+        }
+        next();
+      });
+      router.get("/login", (req, res) => {
+        res.render("admin/login", {
+          title: res.__("title_admin_login"),
+          user: req.session.user || null,
+          theme: req.session.theme || "light",
+          lang: req.session.lang || "en",
+          error: null,
+        });
+      });
+      
+      router.post("/login", async (req, res) => {
+        try {
+          const { username, password } = req.body;
+          const db = await readDB();
+          const user = db.users.find(
+            (u) => u.username === username && u.password === password
+          );
+          if (user) {
+            req.session.user = {
+              id: user.id,
+              username: user.username,
+              role: user.role,
+            };
+            res.redirect("/admin/dashboard");
+          } else {
+            res.render("admin/login", {
+              title: res.__("title_admin_login"),
+              user: null,
+              theme: req.session.theme || "light",
+              lang: req.session.lang || "en",
+              error: res.__("invalid_credentials"),
+            });
+          }
+        } catch (err) {
+          console.error("Admin login error:", err);
+          res.status(500).render("error", {
+            title: res.__("error"),
+            message: "Server error",
+            user: null,
+            theme: req.session.theme || "light",
+            lang: req.session.lang || "en",
+          });
+        }
+      });
+      
+      router.get("/dashboard", isAuthenticated, async (req, res) => {
+        try {
+          const db = await readDB();
+          res.render("admin/dashboard", {
+            title: "Admin Dashboard",
+            products: db.products || [],
+            users: db.users || [],
+            user: req.session.user,
+            theme: req.session.theme || "light",
+          });
+        } catch (err) {
+          res.status(500).render("error", {
+            title: "Error",
+            message: "Server error",
+            user: req.session.user,
+            theme: req.session.theme || "light",
+          });
+        }
+      });
+      
+      router.get("/create", isAuthenticated, async (req, res) => {
+        try {
+          const categories = ["Electronics", "Clothing", "Books"];
+          res.render("admin/create", {
+            title: "Create Product",
+            product: {},
+            categories,
+            user: req.session.user,
+            theme: req.session.theme || "light",
+            error: null,
+          });
+        } catch (err) {
+          res.status(500).render("error", {
+            title: "Error",
+            message: "Server error",
+            user: req.session.user,
+            theme: req.session.theme || "light",
+          });
+        }
+      });
+      
+      router.post("/create", isAuthenticated, async (req, res) => {
+        try {
+          const db = await readDB();
+          const {
+            name,
+            price,
+            currency,
+            availableStock,
+            description,
+            category,
+            discountPrice,
+            discountDays,
+            sellerName,
+            sellerPhone,
+            sellerTelegram,
+            sellerContactUrl,
+            kilowatts,
+            madeIn,
+            detailName = [],
+            detailValue = [],
+            thumbnailUrl,
+            imageUrls = [],
+          } = req.body;
+      
+          const details = {};
+          for (let i = 0; i < detailName.length; i++) {
+            if (detailName[i] && detailValue[i]) {
+              details[detailName[i]] = detailValue[i];
+            }
+          }
+      
+          let discount = null;
+          if (discountPrice && discountDays) {
+            const endDate = new Date();
+            endDate.setDate(endDate.getDate() + parseInt(discountDays));
+            discount = {
+              price: parseFloat(discountPrice),
+              endDate: endDate.toISOString(),
+            };
+          }
+      
+          const newImages = Array.isArray(imageUrls)
+            ? imageUrls
+            : imageUrls.split(",").filter(Boolean);
+          const productId = db.products.length
+            ? Math.max(...db.products.map((p) => p.id)) + 1
+            : 1;
+      
+          const newProduct = {
+            id: productId,
+            name: name || "Unnamed Product",
+            price: parseFloat(price) || 0,
+            currency: currency || "USD",
+            availableStock: parseInt(availableStock) || 0,
+            description: description || "",
+            category: category || "Uncategorized",
+            image: thumbnailUrl || newImages[0] || "https://via.placeholder.com/150",
+            images: newImages,
+            discount,
+            seller: {
+              name: sellerName || "",
+              phone: sellerPhone || "",
+              telegram: sellerTelegram || "",
+              contactUrl: sellerContactUrl || "",
+            },
+            specifications: {
+              kilowatts: kilowatts ? parseFloat(kilowatts) : null,
+              madeIn: madeIn || "",
+              details,
+            },
+            rating: 0,
+          };
+      
+          db.products.push(newProduct);
+          await writeDB(db);
+          res.redirect("/admin/dashboard");
+        } catch (err) {
+          res.status(500).render("admin/create", {
+            title: "Create Product",
+            product: req.body,
+            categories: ["Electronics", "Clothing", "Books"],
+            user: req.session.user,
+            theme: req.session.theme || "light",
+            error: err.message || "Failed to create product",
+          });
+        }
+      });
+      
+      router.get("/edit/:id", isAuthenticated, async (req, res) => {
+        try {
+          const db = await readDB();
+          const product = db.products.find((p) => p.id == req.params.id);
+          if (!product) {
+            return res.status(404).render("error", {
+              title: "Error",
+              message: "Product not found",
+              user: req.session.user,
+              theme: req.session.theme || "light",
+            });
+          }
+          const categories = ["Electronics", "Clothing", "Books"];
+          res.render("admin/edit", {
+            title: "Edit Product",
+            product,
+            categories,
+            user: req.session.user,
+            theme: req.session.theme || "light",
+            error: null,
+          });
+        } catch (err) {
+          res.status(500).render("error", {
+            title: "Error",
+            message: "Server error",
+            user: req.session.user,
+            theme: req.session.theme || "light",
+          });
+        }
+      });
+      
+      router.post("/edit/:id", isAuthenticated, async (req, res) => {
+        try {
+          const db = await readDB();
+          const productIndex = db.products.findIndex((p) => p.id == req.params.id);
+          if (productIndex === -1) {
+            return res.status(404).render("error", {
+              title: "Error",
+              message: "Product not found",
+              user: req.session.user,
+              theme: req.session.theme || "light",
+            });
+          }
+      
+          const {
+            name,
+            price,
+            currency,
+            availableStock,
+            description,
+            category,
+            discountPrice,
+            discountDays,
+            sellerName,
+            sellerPhone,
+            sellerTelegram,
+            sellerContactUrl,
+            kilowatts,
+            madeIn,
+            detailName = [],
+            detailValue = [],
+            deleteImages = "",
+            thumbnailUrl,
+            imageUrls = [],
+          } = req.body;
+      
+          const details = {};
+          for (let i = 0; i < detailName.length; i++) {
+            if (detailName[i] && detailValue[i]) {
+              details[detailName[i]] = detailValue[i];
+            }
+          }
+      
+          let discount = null;
+          if (discountPrice && discountDays) {
+            const endDate = new Date();
+            endDate.setDate(endDate.getDate() + parseInt(discountDays));
+            discount = {
+              price: parseFloat(discountPrice),
+              endDate: endDate.toISOString(),
+            };
+          }
+      
+          const existingImages = (db.products[productIndex].images || []).filter(
+            (img) => !deleteImages.split(",").includes(img)
+          );
+          const newImages = Array.isArray(imageUrls)
+            ? imageUrls
+            : imageUrls.split(",").filter(Boolean);
+          const allImages = [...existingImages, ...newImages];
+      
+          db.products[productIndex] = {
+            ...db.products[productIndex],
+            name: name || db.products[productIndex].name,
+            price: parseFloat(price) || 0,
+            currency: currency || "USD",
+            availableStock: parseInt(availableStock) || 0,
+            description: description || "",
+            category: category || "Uncategorized",
+            image: thumbnailUrl || allImages[0] || db.products[productIndex].image,
+            images: allImages,
+            discount,
+            seller: {
+              name: sellerName || "",
+              phone: sellerPhone || "",
+              telegram: sellerTelegram || "",
+              contactUrl: sellerContactUrl || "",
+            },
+            specifications: {
+              kilowatts: kilowatts ? parseFloat(kilowatts) : null,
+              madeIn: madeIn || "",
+              details,
+            },
+          };
+      
+          await writeDB(db);
+          res.redirect("/admin/dashboard");
+        } catch (err) {
+          res.status(500).render("admin/edit", {
+            title: "Edit Product",
+            product: req.body,
+            categories: ["Electronics", "Clothing", "Books"],
+            user: req.session.user,
+            theme: req.session.theme || "light",
+            error: err.message || "Failed to update product",
+          });
+        }
+      });
+      
+      router.post("/delete/:id", isAuthenticated, async (req, res) => {
+        try {
+          const db = await readDB();
+          const productIndex = db.products.findIndex((p) => p.id == req.params.id);
+          if (productIndex !== -1) {
+            db.products.splice(productIndex, 1);
+            await writeDB(db);
+          }
+          res.redirect("/admin/dashboard");
+        } catch (err) {
+          console.error("Delete error:", err);
+          res.status(500).render("error", {
+            title: res.__("error"),
+            message: "Server error",
+            user: req.session.user || null,
+            theme: req.session.theme || "light",
+            lang: req.session.lang || "en",
+          });
+        }
+      });
+      
+      module.exports = router;
+------------------------------
+  File: customer.js
+    Content:
+      const express = require("express");
+      const fs = require("fs").promises;
+      const path = require("path");
+      const router = express.Router();
+      
+      const dbPath = path.join(__dirname, "../database.json");
+      const readDB = async () => JSON.parse(await fs.readFile(dbPath, "utf8"));
+      const writeDB = async (data) =>
+        await fs.writeFile(dbPath, JSON.stringify(data, null, 2));
+      
+      router.get("/", async (req, res) => {
+        try {
+          const db = await readDB();
+          const categories = ["Electronics", "Clothing", "Books"]; // Hardcode or load from DB
+          const validProducts = db.products.filter(
+            (p) =>
+              p.id &&
+              p.name &&
+              p.price != null &&
+              typeof p.price === "number" &&
+              p.availableStock >= 0
+          );
+          res.render("index", {
+            title: "Catalog",
+            products: validProducts,
+            categories,
+            user: req.session.user || null,
+            theme: req.session.theme || "light",
+          });
+        } catch (err) {
+          console.error("Index error:", err);
+          res.status(500).render("error", {
+            title: "Error",
+            message: "Server error",
+            user: req.session.user || null,
+            theme: req.session.theme || "light",
+          });
+        }
+      });
+      
+      router.get("/product/:id", async (req, res) => {
+        try {
+          const db = await readDB();
+          const product = db.products.find((p) => p.id == req.params.id);
+          if (product) {
+            const related = db.products
+              .filter((p) => p.category === product.category && p.id != product.id)
+              .slice(0, 4);
+            const reviews = db.reviews.filter((r) => r.productId == product.id);
+            res.render("product", {
+              title: product.name,
+              product,
+              related,
+              reviews,
+              user: req.session.user || null,
+              theme: req.session.theme || "light",
+              lang: req.session.lang || "en",
+            });
+          } else {
+            res.status(404).render("error", {
+              title: res.__("error"),
+              message: "Product not found",
+              user: req.session.user || null,
+              theme: req.session.theme || "light",
+              lang: req.session.lang || "en",
+            });
+          }
+        } catch (err) {
+          console.error("Product error:", err);
+          res.status(500).render("error", {
+            title: res.__("error"),
+            message: "Server error",
+            user: req.session.user || null,
+            theme: req.session.theme || "light",
+            lang: req.session.lang || "en",
+          });
+        }
+      });
+      
+      router.get("/cart", async (req, res) => {
+        try {
+          const db = await readDB();
+          const cart = req.session.cart || [];
+          const cartItems = cart
+            .map((item) => {
+              const product = db.products.find((p) => p.id == item.productId);
+              return { ...item, product };
+            })
+            .filter((item) => item.product);
+          res.render("cart", {
+            title: res.__("title_cart"),
+            cartItems,
+            user: req.session.user || null,
+            theme: req.session.theme || "light",
+            lang: req.session.lang || "en",
+          });
+        } catch (err) {
+          console.error("Cart error:", err);
+          res.status(500).render("error", {
+            title: res.__("error"),
+            message: "Server error",
+            user: req.session.user || null,
+            theme: req.session.theme || "light",
+            lang: req.session.lang || "en",
+          });
+        }
+      });
+      
+      router.post("/cart/add", async (req, res) => {
+        try {
+          const { productId, quantity } = req.body;
+          const db = await readDB();
+          const product = db.products.find((p) => p.id == productId);
+          if (!product || product.availableStock < quantity) {
+            return res
+              .status(400)
+              .json({ error: "Product unavailable or insufficient stock" });
+          }
+          req.session.cart = req.session.cart || [];
+          const itemIndex = req.session.cart.findIndex(
+            (item) => item.productId == productId
+          );
+          if (itemIndex !== -1) {
+            req.session.cart[itemIndex].quantity += parseInt(quantity);
+          } else {
+            req.session.cart.push({
+              productId: parseInt(productId),
+              quantity: parseInt(quantity),
+            });
+          }
+          res.json({ success: true });
+        } catch (err) {
+          console.error("Add to cart error:", err);
+          res.status(500).json({ error: "Server error" });
+        }
+      });
+      
+      router.post("/cart/update", async (req, res) => {
+        try {
+          const { productId, quantity } = req.body;
+          const db = await readDB();
+          const product = db.products.find((p) => p.id == productId);
+          if (!product || product.availableStock < quantity) {
+            return res.status(400).json({ error: "Invalid quantity" });
+          }
+          req.session.cart = req.session.cart || [];
+          const itemIndex = req.session.cart.findIndex(
+            (item) => item.productId == productId
+          );
+          if (itemIndex !== -1) {
+            if (quantity > 0) {
+              req.session.cart[itemIndex].quantity = parseInt(quantity);
+            } else {
+              req.session.cart.splice(itemIndex, 1);
+            }
+          }
+          res.json({ success: true });
+        } catch (err) {
+          console.error("Update cart error:", err);
+          res.status(500).json({ error: "Server error" });
+        }
+      });
+      
+      router.post("/cart/remove", async (req, res) => {
+        try {
+          const { productId } = req.body;
+          req.session.cart = req.session.cart || [];
+          req.session.cart = req.session.cart.filter(
+            (item) => item.productId != productId
+          );
+          res.json({ success: true });
+        } catch (err) {
+          console.error("Remove from cart error:", err);
+          res.status(500).json({ error: "Server error" });
+        }
+      });
+      
+      router.post("/review", async (req, res) => {
+        try {
+          if (!req.session.user) {
+            return res.redirect("/login");
+          }
+          const { productId, rating, comment } = req.body;
+          const db = await readDB();
+          db.reviews.push({
+            id: db.reviews.length + 1,
+            productId: parseInt(productId),
+            userId: req.session.user.id,
+            rating: parseInt(rating),
+            comment,
+            date: new Date().toISOString(),
+          });
+          // Update product rating
+          const productReviews = db.reviews.filter((r) => r.productId == productId);
+          const avgRating =
+            productReviews.reduce((sum, r) => sum + r.rating, 0) /
+            productReviews.length;
+          const productIndex = db.products.findIndex((p) => p.id == productId);
+          if (productIndex !== -1) {
+            db.products[productIndex].rating = avgRating;
+          }
+          await writeDB(db);
+          res.redirect(`/product/${productId}`);
+        } catch (err) {
+          console.error("Review error:", err);
+          res.status(500).render("error", {
+            title: res.__("error"),
+            message: "Server error",
+            user: req.session.user || null,
+            theme: req.session.theme || "light",
+            lang: req.session.lang || "en",
+          });
+        }
+      });
+      
+      router.post("/logout", (req, res) => {
+        req.session.user = null;
+        req.session.cart = [];
+        res.redirect("/login");
+      });
+      
+      module.exports = router;
+------------------------------
+==================================================
+
+Directory: C:\Users\user\Pictures\U's pc-build\ProffesDokon\views
+  File: account.ejs
+    Content:
+      <%- include('partials/header') %>
+            <div class="container mx-auto p-6">
+              <h1 class="text-3xl font-bold mb-6"><%= __('title_account') %></h1>
+              <div class="card p-6 rounded-xl shadow-lg bg-gray-800">
+                <div class="flex items-center mb-4">
+                  <img src="<%= user.picture || '/images/default-user.jpg' %>" alt="<%= user.name %>" class="w-16 h-16 rounded-full mr-4">
+                  <div>
+                    <h2 class="text-2xl font-semibold text-gray-200"><%= user.name %></h2>
+                    <p class="text-gray-400"><%= user.email %></p>
+                  </div>
+                </div>
+                <div class="space-y-2">
+                  <p class="text-gray-300"><strong><%= __('role') %>:</strong> <%= user.role %></p>
+                  <a href="/logout" class="inline-block bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                    <%= __('logout') %>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <%- include('partials/footer') %>
+------------------------------
+  File: cart.ejs
+    Content:
+      <%- include('partials/header') %>
+      <div class="container mx-auto p-6 bg-white theme-<%= theme || 'light' %>">
+        <h1 class="text-3xl font-bold mb-6 flex items-center">
+          <i class="fas fa-shopping-cart mr-2 text-blue-500"></i> <%= title %>
+        </h1>
+        <% if (!cartItems || cartItems.length === 0) { %>
+        <p class="text-gray-600"><%= __('cart_empty') %></p>
+        <% } else { %>
+        <div class="space-y-4">
+          <% cartItems.forEach(item => { %> <% if (item.product && item.product.id) {
+          %>
+          <div
+            class="card p-4 rounded-lg shadow-md flex items-center justify-between"
+          >
+            <div class="flex items-center space-x-4">
+              <img
+                src="/images/<%= item.product.image || 'default.jpg' %>"
+                alt="<%= item.product.name || 'No Name' %>"
+                class="w-16 h-16 object-cover rounded"
+              />
+              <div>
+                <h3 class="font-semibold">
+                  <%= item.product.name || 'Unnamed Product' %>
+                </h3>
+                <p class="text-gray-600">
+                  <% if (item.product.discount && item.product.discount.price &&
+                  item.product.discount.endDate && new
+                  Date(item.product.discount.endDate) > new Date()) { %>
+                  <span class="line-through"
+                    >$<%= (item.product.price || 0).toFixed(2) %></span
+                  >
+                  <span class="text-green-600"
+                    >$<%= item.product.discount.price.toFixed(2) %></span
+                  >
+                  <% } else if (item.product.price != null && typeof
+                  item.product.price === 'number') { %> $<%=
+                  item.product.price.toFixed(2) %> <% } else { %>
+                  <span class="text-red-500"><%= __('price_unavailable') %></span>
+                  <% } %>
+                </p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-4">
+              <input
+                type="number"
+                min="1"
+                max="<%= item.product.availableStock || 1 %>"
+                value="<%= item.quantity || 1 %>"
+                class="w-16 p-2 border rounded input"
+                onchange="updateQuantity(<%= item.product.id %>, this.value)"
+              />
+              <button
+                onclick="removeFromCart(<%= item.product.id %>)"
+                class="bg-red-500 text-white px-3 py-2 rounded-lg hover:bg-red-600"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+          <% } %> <% }) %>
+        </div>
+        <% } %>
+      </div>
+      <%- include('partials/footer') %>
+------------------------------
+  File: error.ejs
+    Content:
+      <%- include('partials/header') %>
+      <div class="max-w-md mx-auto py-12 text-center">
+        <h1 class="text-3xl font-bold mb-4">Error</h1>
+        <p class="text-red-500"><%= message %></p>
+        <a href="/" class="btn-primary mt-6 inline-block p-4 rounded-lg"
+          >Back to Home</a
+        >
+      </div>
+      <%- include('partials/footer') %>
+------------------------------
+  File: index.ejs
+    Content:
+      <%- include('partials/header') %>
+      <div
+        class="container mx-auto p-4 sm:p-6 bg-white theme-<%= theme || 'light' %> min-h-screen"
+      >
+        <h1 class="text-3xl font-bold mb-6 flex items-center">
+          <i class="fas fa-store mr-2 text-blue-500"></i> Catalog
+        </h1>
+        <div class="flex flex-col sm:flex-row gap-4 mb-6 w-full">
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Search products..."
+            class="flex-1 p-3 input rounded-lg"
+          />
+          <select id="category-filter" class="p-3 input rounded-lg w-full sm:w-auto">
+            <option value="">All Categories</option>
+            <% (categories || []).forEach(cat => { %>
+            <option value="<%= cat %>"><%= cat %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <% (products || []).forEach(product => { %>
+          <div
+            class="card p-4 rounded-lg shadow-md product-item"
+            data-category="<%= product.category || 'Uncategorized' %>"
+          >
+            <a href="/product/<%= product.id %>">
+              <img
+                src="<%= product.image || 'https://via.placeholder.com/150' %>"
+                alt="<%= product.name || 'No Name' %>"
+                class="w-full h-48 object-cover rounded mb-4"
+              />
+            </a>
+            <h3 class="font-semibold text-lg mb-2">
+              <a href="/product/<%= product.id %>" class="hover:underline"
+                ><%= product.name || 'Unnamed Product' %></a
+              >
+            </h3>
+            <div class="flex items-center mb-2">
+              <% for (let i = 1; i <= 5; i++) { %>
+              <i
+                class="fas fa-star <%= i <= Math.round(product.rating || 0) ? 'text-yellow-400' : 'text-gray-300' %>"
+              ></i>
+              <% } %>
+              <span class="ml-2 text-gray-600"
+                >(<%= (product.rating || 0).toFixed(1) %>)</span
+              >
+            </div>
+            <p class="text-gray-600 mb-2">
+              <% if (product.discount && product.discount.price != null &&
+              product.discount.endDate && new Date(product.discount.endDate) > new
+              Date()) { %>
+              <span class="line-through"
+                >$<%= (product.price != null && typeof product.price === 'number' ?
+                product.price.toFixed(2) : '0.00') %></span
+              >
+              <span class="text-green-600"
+                >$<%= product.discount.price.toFixed(2) %></span
+              >
+              <span class="text-sm text-red-500 block">
+                Discount expires <%= new
+                Date(product.discount.endDate).toLocaleDateString() %>
+              </span>
+              <% } else if (product.price != null && typeof product.price ===
+              'number') { %> $<%= product.price.toFixed(2) %> <% } else { %>
+              <span class="text-red-500">Price unavailable</span>
+              <% } %>
+            </p>
+            <button
+              onclick="addToCart(<%= product.id %>)"
+              class="btn-primary w-full p-2 rounded-lg flex items-center justify-center"
+            >
+              <i class="fas fa-cart-plus mr-2"></i> Add to Cart
+            </button>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+      <%- include('partials/footer') %>
+------------------------------
+  File: login.ejs
+    Content:
+      <%- include('../partials/header') %>
+      <div class="max-w-md mx-auto py-12 theme-<%= theme || 'light' %>">
+        <h1 class="text-3xl font-bold mb-8 flex items-center justify-center">
+          <i class="fas fa-sign-in-alt mr-2"></i> <%= __('title_admin_login') %>
+        </h1>
+        <% if (error) { %>
+        <p class="text-red-600 bg-red-100 p-4 rounded-lg mb-6 flex items-center">
+          <i class="fas fa-exclamation-circle mr-2"></i> <%= error %>
+        </p>
+        <% } %>
+        <form action="/admin/login" method="POST" class="space-y-6">
+          <div>
+            <label for="username" class="block font-medium mb-1 flex items-center">
+              <i class="fas fa-user mr-1"></i> <%= __('username') %>
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              class="w-full p-3 input rounded-lg"
+              required
+            />
+          </div>
+          <div>
+            <label for="password" class="block font-medium mb-1 flex items-center">
+              <i class="fas fa-lock mr-1"></i> <%= __('password') %>
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="w-full p-3 input rounded-lg"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full btn-primary p-4 rounded-lg font-semibold flex items-center justify-center"
+          >
+            <i class="fas fa-sign-in-alt mr-2"></i> <%= __('login') %>
+          </button>
+        </form>
+      </div>
+      <%- include('../partials/footer') %>
+------------------------------
+  File: product.ejs
+    Content:
+      <%- include('partials/header') %>
+      <div class="container mx-auto p-6 bg-white theme-<%= theme %>">
+        <!-- Search Bar -->
+        <div class="mb-6">
+          <input
+            type="text"
+            placeholder="<%= __('search_products') %>"
+            class="w-full p-3 rounded-lg border input focus:outline-none"
+          />
+        </div>
+      
+        <!-- Product Details -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          <!-- Image Section -->
+          <div>
+            <img
+              src="/images/<%= product.image && product.image !== '' ? product.image : 'default.jpg' %>"
+              alt="<%= product.name %>"
+              class="w-full h-96 object-contain rounded-lg shadow-md mb-4"
+            />
+            <div class="flex space-x-2">
+              <% let images = product.images || [product.image || 'default.jpg'] %> <%
+              images.forEach(img => { %>
+              <img
+                src="/images/<%= img && img !== '' ? img : 'default.jpg' %>"
+                alt="Thumbnail"
+                class="w-16 h-16 object-contain rounded border border-gray-200 hover:border-blue-500 cursor-pointer"
+              />
+              <% }) %>
+            </div>
+          </div>
+      
+          <!-- Info Section -->
+          <div>
+            <h1 class="text-3xl font-bold mb-2"><%= product.name %></h1>
+            <div class="flex items-center mb-2">
+              <% for (let i = 1; i <= 5; i++) { %>
+              <i
+                class="fas fa-star <%= i <= (reviews.reduce((sum, r) => sum + r.rating, 0) / (reviews.length || 1)) ? 'text-yellow-400' : 'text-gray-300' %>"
+              ></i>
+              <% } %>
+              <span class="ml-2 text-sm"
+                >(<%= reviews.length %> <%= __('reviews') %>)</span
+              >
+            </div>
+            <p class="text-2xl font-semibold discount-price mb-2">
+              <%= product.discount ? product.discount.price : product.price %> USD <%
+              if (product.discount) { %>
+              <span class="strikethrough text-lg"><%= product.price %> USD</span>
+              <% } %>
+            </p>
+            <p class="mb-2"><%= __('stock') %>: <%= product.availableStock || 0 %></p>
+            <p class="mb-4"><%= __('category') %>: <%= product.category %></p>
+            <p class="mb-4"><%= product.description || __('no_description') %></p>
+            <form
+              action="/cart/add"
+              method="POST"
+              class="flex items-center space-x-4 mb-4"
+            >
+              <input type="hidden" name="productId" value="<%= product.id %>" />
+              <input
+                type="number"
+                name="quantity"
+                value="1"
+                min="1"
+                max="<%= product.availableStock || 10 %>"
+                class="w-20 p-2 border rounded input"
+              />
+              <button type="submit" class="btn-primary px-6 py-3 rounded-lg text-lg">
+                <%= __('add_to_cart') %>
+              </button>
+            </form>
+          </div>
+        </div>
+      
+        <!-- Reviews Section -->
+        <div class="mb-8">
+          <h2 class="text-2xl font-bold mb-4"><%= __('reviews') %></h2>
+          <% if (reviews.length > 0) { %>
+          <div class="space-y-4">
+            <% reviews.forEach(review => { %>
+            <div class="border p-4 rounded-lg card">
+              <div class="flex items-center mb-2">
+                <span class="font-semibold"><%= review.userName %></span>
+                <span class="ml-2 text-sm"
+                  ><%= new Date(review.date).toLocaleDateString() %></span
+                >
+              </div>
+              <div class="flex items-center mb-2">
+                <% for (let i = 1; i <= 5; i++) { %>
+                <i
+                  class="fas fa-star <%= i <= review.rating ? 'text-yellow-400' : 'text-gray-300' %>"
+                ></i>
+                <% } %>
+              </div>
+              <p><%= review.comment %></p>
+            </div>
+            <% }) %>
+          </div>
+          <% } else { %>
+          <p class="text-gray-500"><%= __('no_reviews') %></p>
+          <% } %>
+      
+          <!-- Review Form -->
+          <% if (session.user) { %>
+          <div class="mt-6 p-6 rounded-lg card">
+            <h3 class="text-xl font-semibold mb-4"><%= __('write_review') %></h3>
+            <form
+              action="/product/<%= product.id %>/review"
+              method="POST"
+              class="space-y-4"
+            >
+              <div>
+                <label for="rating" class="block font-medium"
+                  ><%= __('rating') %></label
+                >
+                <select
+                  name="rating"
+                  id="rating"
+                  class="w-full p-2 border rounded input"
+                  required
+                >
+                  <option value="1">1 Star</option>
+                  <option value="2">2 Stars</option>
+                  <option value="3">3 Stars</option>
+                  <option value="4">4 Stars</option>
+                  <option value="5">5 Stars</option>
+                </select>
+              </div>
+              <div>
+                <label for="comment" class="block font-medium"
+                  ><%= __('comment') %></label
+                >
+                <textarea
+                  name="comment"
+                  id="comment"
+                  rows="4"
+                  class="w-full p-2 border rounded input"
+                  required
+                ></textarea>
+              </div>
+              <button type="submit" class="btn-primary px-6 py-2 rounded-lg">
+                <%= __('submit_review') %>
+              </button>
+            </form>
+          </div>
+          <% } else { %>
+          <p class="text-gray-500 mt-4"><%= __('login_to_review') %></p>
+          <% } %>
+        </div>
+      
+        <!-- Related Products -->
+        <div>
+          <h2 class="text-2xl font-bold mb-4"><%= __('related_products') %></h2>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            <% relatedProducts.forEach(p => { %>
+            <a
+              href="/product/<%= p.id %>"
+              class="border p-4 rounded-lg hover:shadow-md card"
+            >
+              <img
+                src="/images/<%= p.image && p.image !== '' ? p.image : 'default.jpg' %>"
+                alt="<%= p.name %>"
+                class="w-full h-40 object-contain rounded mb-2"
+              />
+              <h3 class="text-lg font-semibold truncate"><%= p.name %></h3>
+              <p class="discount-price font-medium"><%= p.price %> USD</p>
+            </a>
+            <% }) %>
+          </div>
+        </div>
+      </div>
+      <%- include('partials/footer') %>
+------------------------------
+==================================================
+
+Directory: C:\Users\user\Pictures\U's pc-build\ProffesDokon\views\admin
+  File: autologin.ejs
+    Content:
+      <!DOCTYPE html>
+      <html lang="<%= lang %>">
+        <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title><%= title %> - ProffesDokon</title>
+          <link
+            rel="icon"
+            href="/images/icon.jpg"
+            type="image/jpeg"
+            sizes="512x512"
+          />
+          <script src="https://cdn.tailwindcss.com"></script>
+          <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+          />
+          <link rel="stylesheet" href="/css/theme.css" />
+        </head>
+        <body
+          class="theme-<%= theme %> font-sans min-h-screen flex items-center justify-center"
+        >
+          <div class="card p-8 rounded-xl shadow-lg max-w-md w-full text-center">
+            <i
+              class="fas fa-spinner autologin-spinner text-4xl text-blue-500 mb-4"
+            ></i>
+            <p class="text-lg"><%= __('redirecting_to_dashboard') %></p>
+          </div>
+          <script>
+            setTimeout(() => {
+              window.location.href = "/admin/dashboard";
+            }, 1000);
+          </script>
+        </body>
+      </html>
+------------------------------
+  File: create.ejs
+    Content:
+      <%- include('../partials/header') %>
+      <div class="container mx-auto p-6 bg-white theme-<%= theme || 'light' %>">
+        <h1 class="text-3xl font-bold mb-6 flex items-center">
+          <i class="fas fa-plus-circle mr-2 text-blue-500"></i> Create Product
+        </h1>
+        <% if (error) { %>
+        <p class="text-red-600 bg-red-100 p-4 rounded-lg mb-6 flex items-center">
+          <i class="fas fa-exclamation-circle mr-2"></i> <%= error %>
+        </p>
+        <% } %>
+        <form id="createForm" action="/admin/create" method="POST" class="space-y-6">
+          <!-- Basic Information -->
+          <div class="card p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+              <i class="fas fa-info-circle mr-2 text-blue-500"></i> Basic Information
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <label for="name" class="block font-medium mb-1 flex items-center">
+                  <i class="fas fa-tag mr-1 text-gray-500"></i> Product Name
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value="<%= product.name || '' %>"
+                  class="w-full p-3 input rounded-lg"
+                  required
+                />
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="price" class="block font-medium mb-1 flex items-center">
+                    <i class="fas fa-dollar-sign mr-1 text-gray-500"></i> Price
+                  </label>
+                  <input
+                    type="number"
+                    id="price"
+                    name="price"
+                    step="0.01"
+                    value="<%= product.price != null && typeof product.price === 'number' ? product.price.toFixed(2) : '' %>"
+                    class="w-full p-3 input rounded-lg"
+                    required
+                  />
+                </div>
+                <div>
+                  <label
+                    for="currency"
+                    class="block font-medium mb-1 flex items-center"
+                  >
+                    <i class="fas fa-coins mr-1 text-gray-500"></i> Currency
+                  </label>
+                  <select
+                    id="currency"
+                    name="currency"
+                    class="w-full p-3 input rounded-lg"
+                  >
+                    <option value="USD">USD</option>
+                    <option value="UZS">UZS</option>
+                    <option value="RUB">RUB</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label
+                  for="availableStock"
+                  class="block font-medium mb-1 flex items-center"
+                >
+                  <i class="fas fa-boxes mr-1 text-gray-500"></i> Available Stock
+                </label>
+                <input
+                  type="number"
+                  id="availableStock"
+                  name="availableStock"
+                  value="<%= product.availableStock != null ? product.availableStock : '' %>"
+                  class="w-full p-3 input rounded-lg"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+      
+          <!-- Thumbnail Upload -->
+          <div class="card p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+              <i class="fas fa-image mr-2 text-blue-500"></i> Main Thumbnail
+            </h2>
+            <div
+              class="drop-zone p-6 rounded-lg border-2 border-dashed border-gray-300 text-center"
+              id="thumbnailDropZone"
+            >
+              <p class="text-gray-500">
+                <i class="fas fa-upload mr-1"></i> Drag and drop or click to upload
+                thumbnail
+              </p>
+              <input
+                type="file"
+                id="thumbnailInput"
+                accept="image/*"
+                class="hidden"
+              />
+            </div>
+            <div id="thumbnailPreview" class="flex flex-wrap gap-4 mt-4"></div>
+            <input type="hidden" name="thumbnailUrl" id="thumbnailUrl" />
+          </div>
+      
+          <!-- Extra Images Upload -->
+          <div class="card p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+              <i class="fas fa-images mr-2 text-blue-500"></i> Extra Images
+            </h2>
+            <div
+              class="drop-zone p-6 rounded-lg border-2 border-dashed border-gray-300 text-center"
+              id="imagesDropZone"
+            >
+              <p class="text-gray-500">
+                <i class="fas fa-upload mr-1"></i> Drag and drop or click to upload
+                images
+              </p>
+              <input
+                type="file"
+                id="imagesInput"
+                multiple
+                accept="image/*"
+                class="hidden"
+              />
+            </div>
+            <div id="imagesPreview" class="flex flex-wrap gap-4 mt-4"></div>
+            <input type="hidden" name="imageUrls" id="imageUrls" />
+          </div>
+      
+          <!-- Discount -->
+          <div class="card p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+              <i class="fas fa-tags mr-2 text-blue-500"></i> Discount
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="discountPrice"
+                  class="block font-medium mb-1 flex items-center"
+                >
+                  <i class="fas fa-dollar-sign mr-1 text-gray-500"></i> Discount Price
+                </label>
+                <input
+                  type="number"
+                  id="discountPrice"
+                  name="discountPrice"
+                  step="0.01"
+                  value=""
+                  class="w-full p-3 input rounded-lg"
+                />
+              </div>
+              <div>
+                <label
+                  for="discountDays"
+                  class="block font-medium mb-1 flex items-center"
+                >
+                  <i class="fas fa-clock mr-1 text-gray-500"></i> Discount Duration
+                  (days)
+                </label>
+                <input
+                  type="number"
+                  id="discountDays"
+                  name="discountDays"
+                  placeholder="Days"
+                  min="0"
+                  value=""
+                  class="w-full p-3 input rounded-lg"
+                />
+              </div>
+            </div>
+          </div>
+      
+          <!-- Seller Info -->
+          <div class="card p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+              <i class="fas fa-store mr-2 text-blue-500"></i> Seller Information
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <label
+                  for="sellerName"
+                  class="block font-medium mb-1 flex items-center"
+                >
+                  <i class="fas fa-user mr-1 text-gray-500"></i> Seller Name
+                </label>
+                <input
+                  type="text"
+                  id="sellerName"
+                  name="sellerName"
+                  value=""
+                  class="w-full p-3 input rounded-lg"
+                  required
+                />
+              </div>
+              <div>
+                <label
+                  for="sellerPhone"
+                  class="block font-medium mb-1 flex items-center"
+                >
+                  <i class="fas fa-phone mr-1 text-gray-500"></i> Seller Phone
+                </label>
+                <input
+                  type="text"
+                  id="sellerPhone"
+                  name="sellerPhone"
+                  value=""
+                  class="w-full p-3 input rounded-lg"
+                  required
+                />
+              </div>
+              <div>
+                <label
+                  for="sellerTelegram"
+                  class="block font-medium mb-1 flex items-center"
+                >
+                  <i class="fab fa-telegram mr-1 text-gray-500"></i> Seller Telegram
+                </label>
+                <input
+                  type="text"
+                  id="sellerTelegram"
+                  name="sellerTelegram"
+                  value=""
+                  class="w-full p-3 input rounded-lg"
+                  required
+                />
+              </div>
+              <div>
+                <label
+                  for="sellerContactUrl"
+                  class="block font-medium mb-1 flex items-center"
+                >
+                  <i class="fas fa-link mr-1 text-gray-500"></i> Seller Contact URL
+                </label>
+                <input
+                  type="text"
+                  id="sellerContactUrl"
+                  name="sellerContactUrl"
+                  value=""
+                  class="w-full p-3 input rounded-lg"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+      
+          <!-- Additional Details -->
+          <div class="card p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+              <i class="fas fa-list mr-2 text-blue-500"></i> Additional Details
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <label
+                  for="description"
+                  class="block font-medium mb-1 flex items-center"
+                >
+                  <i class="fas fa-file-alt mr-1 text-gray-500"></i> Description
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  rows="4"
+                  class="w-full p-3 input rounded-lg"
+                ></textarea>
+              </div>
+              <div>
+                <label
+                  for="categoryInput"
+                  class="block font-medium mb-1 flex items-center"
+                >
+                  <i class="fas fa-folder mr-1 text-gray-500"></i> Category
+                </label>
+                <input
+                  type="text"
+                  id="categoryInput"
+                  name="category"
+                  value=""
+                  class="w-full p-3 input rounded-lg"
+                  required
+                />
+                <div id=" вентиляSuggestions" class="mt-2 flex flex-wrap gap-2"></div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label
+                    for="kilowatts"
+                    class="block font-medium mb-1 flex items-center"
+                  >
+                    <i class="fas fa-bolt mr-1 text-gray-500"></i> Kilowatts
+                  </label>
+                  <input
+                    type="number"
+                    id="kilowatts"
+                    name="kilowatts"
+                    step="0.1"
+                    value=""
+                    class="w-full p-3 input rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="madeIn"
+                    class="block font-medium mb-1 flex items-center"
+                  >
+                    <i class="fas fa-globe mr-1 text-gray-500"></i> Made In
+                  </label>
+                  <input
+                    type="text"
+                    id="madeIn"
+                    name="madeIn"
+                    value=""
+                    class="w-full p-3 input rounded-lg"
+                  />
+                </div>
+              </div>
+              <div id="detailsContainer" class="space-y-4"></div>
+              <button
+                type="button"
+                id="addDetail"
+                class="btn-primary px-4 py-2 rounded-lg flex items-center"
+              >
+                <i class="fas fa-plus mr-1"></i> Add Detail
+              </button>
+            </div>
+          </div>
+      
+          <!-- Submit -->
+          <button
+            type="submit"
+            class="w-full btn-primary p-4 rounded-lg font-semibold flex items-center justify-center"
+          >
+            <i class="fas fa-save mr-2"></i> Create Product
+          </button>
+        </form>
+      </div>
+      
+      <script>
+        const IMGBB_API_KEY = "b5b7a58d6a3224b37b2ce4a2226b7780";
+      
+        // Category suggestions
+        const dbCategories = <%- JSON.stringify(categories || []) %>;
+        const categoryInput = document.getElementById('categoryInput');
+        const suggestionsDiv = document.getElementById('categorySuggestions');
+      
+        categoryInput.addEventListener('input', () => {
+          const value = categoryInput.value.toLowerCase();
+          suggestionsDiv.innerHTML = '';
+          if (value) {
+            dbCategories
+              .filter(cat => cat.toLowerCase().includes(value))
+              .slice(0, 5)
+              .forEach(cat => {
+                const tag = document.createElement('span');
+                tag.className = 'bg-blue-100 text-blue-800 px-3 py-1 rounded-full cursor-pointer hover:bg-blue-200';
+                tag.textContent = cat;
+                tag.onclick = () => {
+                  categoryInput.value = cat;
+                  suggestionsDiv.innerHTML = '';
+                };
+                suggestionsDiv.appendChild(tag);
+              });
+          }
+        });
+      
+        // Thumbnail upload
+        const thumbnailDropZone = document.getElementById('thumbnailDropZone');
+        const thumbnailInput = document.getElementById('thumbnailInput');
+        const thumbnailPreview = document.getElementById('thumbnailPreview');
+        const thumbnailUrlInput = document.getElementById('thumbnailUrl');
+      
+        thumbnailDropZone.addEventListener('click', () => thumbnailInput.click());
+        thumbnailDropZone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          thumbnailDropZone.classList.add('border-blue-500');
+        });
+        thumbnailDropZone.addEventListener('dragleave', () => {
+          thumbnailDropZone.classList.remove('border-blue-500');
+        });
+        thumbnailDropZone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          thumbnailDropZone.classList.remove('border-blue-500');
+          thumbnailInput.files = e.dataTransfer.files;
+          uploadThumbnail();
+        });
+        thumbnailInput.addEventListener('change', uploadThumbnail);
+      
+        async function uploadThumbnail() {
+          if (!thumbnailInput.files[0]) return;
+          const file = thumbnailInput.files[0];
+          const formData = new FormData();
+          formData.append('image', file);
+      
+          try {
+            const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+              method: 'POST',
+              body: formData,
+            });
+            const data = await response.json();
+            if (data.success) {
+              thumbnailUrlInput.value = data.data.url;
+              thumbnailPreview.innerHTML = `
+                <div class="relative">
+                  <img src="${data.data.url}" alt="Preview" class="w-24 h-24 object-cover rounded-md shadow">
+                  <button type="button" class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600" onclick="thumbnailInput.value=''; thumbnailUrlInput.value=''; thumbnailPreview.innerHTML=''">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              `;
+            } else {
+              alert('Thumbnail upload failed: ' + (data.error?.message || 'Unknown error'));
+            }
+          } catch (err) {
+            alert('Thumbnail upload error: ' + err.message);
+          }
+        }
+      
+        // Extra images upload
+        const imagesDropZone = document.getElementById('imagesDropZone');
+        const imagesInput = document.getElementById('imagesInput');
+        const imagesPreview = document.getElementById('imagesPreview');
+        const imageUrlsInput = document.getElementById('imageUrls');
+        let imageUrls = [];
+      
+        imagesDropZone.addEventListener('click', () => imagesInput.click());
+        imagesDropZone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          imagesDropZone.classList.add('border-blue-500');
+        });
+        imagesDropZone.addEventListener('dragleave', () => {
+          imagesDropZone.classList.remove('border-blue-500');
+        });
+        imagesDropZone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          imagesDropZone.classList.remove('border-blue-500');
+          imagesInput.files = e.dataTransfer.files;
+          uploadImages();
+        });
+        imagesInput.addEventListener('change', uploadImages);
+      
+        async function uploadImages() {
+          imagesPreview.innerHTML = '';
+          imageUrls = [];
+          const files = Array.from(imagesInput.files);
+      
+          for (const file of files) {
+            const formData = new FormData();
+            formData.append('image', file);
+            try {
+              const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                method: 'POST',
+                body: formData,
+              });
+              const data = await response.json();
+              if (data.success) {
+                imageUrls.push(data.data.url);
+                const div = document.createElement('div');
+                div.className = 'relative';
+                div.innerHTML = `
+                  <img src="${data.data.url}" alt="Preview" class="w-24 h-24 object-cover rounded-md shadow">
+                  <button type="button" class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600" onclick="removeImage('${data.data.url}')">
+                    <i class="fas fa-times"></i>
+                  </button>
+                `;
+                imagesPreview.appendChild(div);
+              } else {
+                alert('Image upload failed: ' + (data.error?.message || 'Unknown error'));
+              }
+            } catch (err) {
+              alert('Image upload error: ' + err.message);
+            }
+          }
+          imageUrlsInput.value = imageUrls.join(',');
+        }
+      
+        function removeImage(url) {
+          imageUrls = imageUrls.filter(u => u !== url);
+          imageUrlsInput.value = imageUrls.join(',');
+          updateImagesPreview();
+        }
+      
+        function updateImagesPreview() {
+          imagesPreview.innerHTML = '';
+          imageUrls.forEach((url, index) => {
+            const div = document.createElement('div');
+            div.className = 'relative';
+            div.innerHTML = `
+              <img src="${url}" alt="Preview" class="w-24 h-24 object-cover rounded-md shadow">
+              <button type="button" class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600" onclick="removeImage('${url}')">
+                <i class="fas fa-times"></i>
+              </button>
+            `;
+            imagesPreview.appendChild(div);
+          });
+        }
+      
+        // Dynamic details
+        const detailsContainer = document.getElementById('detailsContainer');
+        document.getElementById('addDetail').addEventListener('click', () => {
+          const div = document.createElement('div');
+          div.className = 'flex items-center space-x-2 detail-row';
+          div.innerHTML = `
+            <input type="text" name="detailName[]" placeholder="Detail Name" class="flex-1 p-3 input rounded-lg">
+            <input type="text" name="detailValue[]" placeholder="Detail Value" class="flex-1 p-3 input rounded-lg">
+            <button type="button" class="bg-red-500 text-white px-3 py-2 rounded-lg hover:bg-red-600" onclick="this.parentElement.remove()">
+              <i class="fas fa-trash"></i>
+            </button>
+          `;
+          detailsContainer.appendChild(div);
+        });
+      
+        // Form submission
+        document.getElementById('createForm').addEventListener('submit', (e) => {
+          if (!thumbnailUrlInput.value && !document.querySelector('#thumbnailPreview img')) {
+            e.preventDefault();
+            alert('Please upload a thumbnail image.');
+          }
+        });
+      </script>
+      <%- include('../partials/footer') %>
+------------------------------
+  File: dashboard.ejs
+    Content:
+      <%- include('../partials/header') %>
+      <div class="container mx-auto p-6 bg-white theme-<%= theme %>">
+        <h1 class="text-3xl font-bold mb-6 flex items-center">
+          <i class="fas fa-tachometer-alt mr-2 text-blue-500"></i> <%= title %>
+        </h1>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
+          <div class="card p-4 rounded-lg shadow-md">
+            <p class="text-sm text-gray-400"><%= __('products') %></p>
+            <p class="text-2xl font-bold"><%= products.length %></p>
+          </div>
+          <div class="card p-4 rounded-lg shadow-md">
+            <p class="text-sm text-gray-400"><%= __('users') %></p>
+            <p class="text-2xl font-bold"><%= users.length %></p>
+          </div>
+        </div>
+        <h2 class="text-2xl font-semibold mb-4"><%= __('manage_products') %></h2>
+        <div class="card p-6 rounded-lg shadow-md">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b">
+                <th class="p-2 text-left"><%= __('product_name') %></th>
+                <th class="p-2 text-left"><%= __('category') %></th>
+                <th class="p-2 text-left"><%= __('price') %></th>
+                <th class="p-2 text-left"><%= __('stock') %></th>
+                <th class="p-2 text-left"><%= __('actions') %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% products.forEach(product => { %>
+              <tr class="border-b">
+                <td class="p-2"><%= product.name %></td>
+                <td class="p-2"><%= product.category %></td>
+                <td class="p-2">$<%= product.price.toFixed(2) %></td>
+                <td class="p-2"><%= product.availableStock %></td>
+                <td class="p-2">
+                  <a
+                    href="/admin/edit/<%= product.id %>"
+                    class="text-blue-500 hover:underline"
+                    ><%= __('edit') %></a
+                  >
+                  <form
+                    action="/admin/delete/<%= product.id %>"
+                    method="POST"
+                    class="inline"
+                  >
+                    <button type="submit" class="text-red-500 hover:underline ml-2">
+                      <%= __('delete') %>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <%- include('../partials/footer') %>
+------------------------------
+  File: edit.ejs
+    Content:
+      <%- include('../partials/header') %>
+            <div class="container mx-auto p-6 bg-white theme-<%= theme || 'light' %>">
+              <h1 class="text-3xl font-bold mb-6 flex items-center">
+                <i class="fas fa-edit mr-2 text-blue-500"></i> Edit Product
+              </h1>
+              <% if (error) { %>
+                <p class="text-red-600 bg-red-100 p-4 rounded-lg mb-6 flex items-center">
+                  <i class="fas fa-exclamation-circle mr-2"></i> <%= error %>
+                </p>
+              <% } %>
+              <form id="editForm" action="/admin/edit/<%= product.id %>" method="POST" class="space-y-6">
+                <!-- Basic Information -->
+                <div class="card p-6 rounded-lg shadow-md">
+                  <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-info-circle mr-2 text-blue-500"></i> Basic Information
+                  </h2>
+                  <div class="space-y-4">
+                    <div>
+                      <label for="name" class="block font-medium mb-1 flex items-center">
+                        <i class="fas fa-tag mr-1 text-gray-500"></i> Product Name
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value="<%= product.name || '' %>"
+                        class="w-full p-3 input rounded-lg"
+                        required
+                      >
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label for="price" class="block font-medium mb-1 flex items-center">
+                          <i class="fas fa-dollar-sign mr-1 text-gray-500"></i> Price
+                        </label>
+                        <input
+                          type="number"
+                          id="price"
+                          name="price"
+                          step="0.01"
+                          value="<%= product.price != null && typeof product.price === 'number' ? product.price.toFixed(2) : '' %>"
+                          class="w-full p-3 input rounded-lg"
+                          required
+                        >
+                      </div>
+                      <div>
+                        <label for="currency" class="block font-medium mb-1 flex items-center">
+                          <i class="fas fa-coins mr-1 text-gray-500"></i> Currency
+                        </label>
+                        <select id="currency" name="currency" class="w-full p-3 input rounded-lg">
+                          <option value="USD" <%= product.currency === 'USD' ? 'selected' : '' %>>USD</option>
+                          <option value="UZS" <%= product.currency === 'UZS' ? 'selected' : '' %>>UZS</option>
+                          <option value="RUB" <%= product.currency === 'RUB' ? 'selected' : '' %>>RUB</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <label for="availableStock" class="block font-medium mb-1 flex items-center">
+                        <i class="fas fa-boxes mr-1 text-gray-500"></i> Available Stock
+                      </label>
+                      <input
+                        type="number"
+                        id="availableStock"
+                        name="availableStock"
+                        value="<%= product.availableStock != null ? product.availableStock : '' %>"
+                        class="w-full p-3 input rounded-lg"
+                        required
+                      >
+                    </div>
+                  </div>
+                </div>
+            
+                <!-- Thumbnail Upload -->
+                <div class="card p-6 rounded-lg shadow-md">
+                  <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-image mr-2 text-blue-500"></i> Main Thumbnail
+                  </h2>
+                  <div
+                    class="drop-zone p-6 rounded-lg border-2 border-dashed border-gray-300 text-center"
+                    id="thumbnailDropZone"
+                  >
+                    <p class="text-gray-500"><i class="fas fa-upload mr-1"></i> Drag and drop or click to upload thumbnail</p>
+                    <input type="file" id="thumbnailInput" accept="image/*" class="hidden">
+                  </div>
+                  <div id="thumbnailPreview" class="flex flex-wrap gap-4 mt-4">
+                    <% if (product.image) { %>
+                      <div class="relative">
+                        <img
+                          src="<%= product.image %>"
+                          alt="Current Thumbnail"
+                          class="w-24 h-24 object-cover rounded-md shadow"
+                        >
+                        <button
+                          type="button"
+                          class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
+                          onclick="this.parentElement.remove(); addDeleteImage('<%= product.image %>')"
+                        >
+                          <i class="fas fa-times"></i>
+                        </button>
+                      </div>
+                    <% } %>
+                  </div>
+                  <input type="hidden" name="thumbnailUrl" id="thumbnailUrl">
+                </div>
+            
+                <!-- Extra Images Upload -->
+                <div class="card p-6 rounded-lg shadow-md">
+                  <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-images mr-2 text-blue-500"></i> Extra Images
+                  </h2>
+                  <div class="flex flex-wrap gap-4 mb-4">
+                    <% (product.images || []).forEach(img => { %>
+                      <div class="relative">
+                        <img
+                          src="<%= img %>"
+                          alt="Current Image"
+                          class="w-24 h-24 object-cover rounded-md shadow"
+                        >
+                        <button
+                          type="button"
+                          class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
+                          onclick="this.parentElement.remove(); addDeleteImage('<%= img %>')"
+                        >
+                          <i class="fas fa-times"></i>
+                        </button>
+                      </div>
+                    <% }) %>
+                  </div>
+                  <div
+                    class="drop-zone p-6 rounded-lg border-2 border-dashed border-gray-300 text-center"
+                    id="imagesDropZone"
+                  >
+                    <p class="text-gray-500"><i class="fas fa-upload mr-1"></i> Drag and drop or click to upload images</p>
+                    <input type="file" id="imagesInput" multiple accept="image/*" class="hidden">
+                  </div>
+                  <div id="imagesPreview" class="flex flex-wrap gap-4 mt-4"></div>
+                  <input type="hidden" name="imageUrls" id="imageUrls">
+                </div>
+            
+                <!-- Discount -->
+                <div class="card p-6 rounded-lg shadow-md">
+                  <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-tags mr-2 text-blue-500"></i> Discount
+                  </h2>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label for="discountPrice" class="block font-medium mb-1 flex items-center">
+                        <i class="fas fa-dollar-sign mr-1 text-gray-500"></i> Discount Price
+                      </label>
+                      <input
+                        type="number"
+                        id="discountPrice"
+                        name="discountPrice"
+                        step="0.01"
+                        value="<%= product.discount?.price != null ? product.discount.price.toFixed(2) : '' %>"
+                        class="w-full p-3 input rounded-lg"
+                      >
+                    </div>
+                    <div>
+                      <label for="discountDays" class="block font-medium mb-1 flex items-center">
+                        <i class="fas fa-clock mr-1 text-gray-500"></i> Discount Duration (days)
+                      </label>
+                      <input
+                        type="number"
+                        id="discountDays"
+                        name="discountDays"
+                        placeholder="Days"
+                        min="0"
+                        value="<%= product.discount?.endDate ? Math.ceil((new Date(product.discount.endDate) - new Date()) / (1000 * 60 * 60 * 24)) : '' %>"
+                        class="w-full p-3 input rounded-lg"
+                      >
+                    </div>
+                  </div>
+                </div>
+            
+                <!-- Seller Info -->
+                <div class="card p-6 rounded-lg shadow-md">
+                  <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-store mr-2 text-blue-500"></i> Seller Information
+                  </h2>
+                  <div class="space-y-4">
+                    <div>
+                      <label for="sellerName" class="block font-medium mb-1 flex items-center">
+                        <i class="fas fa-user mr-1 text-gray-500"></i> Seller Name
+                      </label>
+                      <input
+                        type="text"
+                        id="sellerName"
+                        name="sellerName"
+                        value="<%= product.seller?.name || '' %>"
+                        class="w-full p-3 input rounded-lg"
+                        required
+                      >
+                    </div>
+                    <div>
+                      <label for="sellerPhone" class="block font-medium mb-1 flex items-center">
+                        <i class="fas fa-phone mr-1 text-gray-500"></i> Seller Phone
+                      </label>
+                      <input
+                        type="text"
+                        id="sellerPhone"
+                        name="sellerPhone"
+                        value="<%= product.seller?.phone || '' %>"
+                        class="w-full p-3 input rounded-lg"
+                        required
+                      >
+                    </div>
+                    <div>
+                      <label for="sellerTelegram" class="block font-medium mb-1 flex items-center">
+                        <i class="fab fa-telegram mr-1 text-gray-500"></i> Seller Telegram
+                      </label>
+                      <input
+                        type="text"
+                        id="sellerTelegram"
+                        name="sellerTelegram"
+                        value="<%= product.seller?.telegram || '' %>"
+                        class="w-full p-3 input rounded-lg"
+                        required
+                      >
+                    </div>
+                    <div>
+                      <label for="sellerContactUrl" class="block font-medium mb-1 flex items-center">
+                        <i class="fas fa-link mr-1 text-gray-500"></i> Seller Contact URL
+                      </label>
+                      <input
+                        type="text"
+                        id="sellerContactUrl"
+                        name="sellerContactUrl"
+                        value="<%= product.seller?.contactUrl || '' %>"
+                        class="w-full p-3 input rounded-lg"
+                        required
+                      >
+                    </div>
+                  </div>
+                </div>
+            
+                <!-- Additional Details -->
+                <div class="card p-6 rounded-lg shadow-md">
+                  <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-list mr-2 text-blue-500"></i> Additional Details
+                  </h2>
+                  <div class="space-y-4">
+                    <div>
+                      <label for="description" class="block font-medium mb-1 flex items-center">
+                        <i class="fas fa-file-alt mr-1 text-gray-500"></i> Description
+                      </label>
+                      <textarea
+                        id="description"
+                        name="description"
+                        rows="4"
+                        class="w-full p-3 input rounded-lg"
+                      ><%= product.description || '' %></textarea>
+                    </div>
+                    <div>
+                      <label for="categoryInput" class="block font-medium mb-1 flex items-center">
+                        <i class="fas fa-folder mr-1 text-gray-500"></i> Category
+                      </label>
+                      <input
+                        type="text"
+                        id="categoryInput"
+                        name="category"
+                        value="<%= product.category || '' %>"
+                        class="w-full p-3 input rounded-lg"
+                        required
+                      >
+                      <div id="categorySuggestions" class="mt-2 flex flex-wrap gap-2"></div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label for="kilowatts" class="block font-medium mb-1 flex items-center">
+                          <i class="fas fa-bolt mr-1 text-gray-500"></i> Kilowatts
+                        </label>
+                        <input
+                          type="number"
+                          id="kilowatts"
+                          name="kilowatts"
+                          step="0.1"
+                          value="<%= product.specifications?.kilowatts != null ? product.specifications.kilowatts : '' %>"
+                          class="w-full p-3 input rounded-lg"
+                        >
+                      </div>
+                      <div>
+                        <label for="madeIn" class="block font-medium mb-1 flex items-center">
+                          <i class="fas fa-globe mr-1 text-gray-500"></i> Made In
+                        </label>
+                        <input
+                          type="text"
+                          id="madeIn"
+                          name="madeIn"
+                          value="<%= product.specifications?.madeIn || '' %>"
+                          class="w-full p-3 input rounded-lg"
+                        >
+                      </div>
+                    </div>
+                    <div id="detailsContainer" class="space-y-4">
+                      <% Object.entries(product.specifications?.details || {}).forEach(([name, value]) => { %>
+                        <div class="flex items-center space-x-2 detail-row">
+                          <input
+                            type="text"
+                            name="detailName[]"
+                            value="<%= name %>"
+                            placeholder="Detail Name"
+                            class="flex-1 p-3 input rounded-lg"
+                          >
+                          <input
+                            type="text"
+                            name="detailValue[]"
+                            value="<%= value %>"
+                            placeholder="Detail Value"
+                            class="flex-1 p-3 input rounded-lg"
+                          >
+                          <button
+                            type="button"
+                            class="bg-red-500 text-white px-3 py-2 rounded-lg hover:bg-red-600"
+                            onclick="this.parentElement.remove()"
+                          >
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      <% }) %>
+                    </div>
+                    <button
+                      type="button"
+                      id="addDetail"
+                      class="btn-primary px-4 py-2 rounded-lg flex items-center"
+                    >
+                      <i class="fas fa-plus mr-1"></i> Add Detail
+                    </button>
+                  </div>
+                </div>
+            
+                <!-- Hidden field for deleted images -->
+                <input type="hidden" name="deleteImages" id="deleteImagesInput" value="">
+            
+                <!-- Submit -->
+                <button
+                  type="submit"
+                  class="w-full btn-primary p-4 rounded-lg font-semibold flex items-center justify-center"
+                >
+                  <i class="fas fa-save mr-2"></i> Update Product
+                </button>
+              </form>
+            </div>
+            
+            <script>
+            // ImgBB API key (temporary; move to server-side for production)
+            const IMGBB_API_KEY = "<%= process.env.IMGBB_API_KEY || 'your-imgbb-api-key-here' %>";
+            
+            // Category suggestions
+            const dbCategories = <%- JSON.stringify(categories || []) %>;
+            const categoryInput = document.getElementById('categoryInput');
+            const suggestionsDiv = document.getElementById('categorySuggestions');
+            
+            categoryInput.addEventListener('input', () => {
+              const value = categoryInput.value.toLowerCase();
+              suggestionsDiv.innerHTML = '';
+              if (value) {
+                dbCategories
+                  .filter(cat => cat.toLowerCase().includes(value))
+                  .slice(0, 5)
+                  .forEach(cat => {
+                    const tag = document.createElement('span');
+                    tag.className = 'bg-blue-100 text-blue-800 px-3 py-1 rounded-full cursor-pointer hover:bg-blue-200';
+                    tag.textContent = cat;
+                    tag.onclick = () => {
+                      categoryInput.value = cat;
+                      suggestionsDiv.innerHTML = '';
+                    };
+                    suggestionsDiv.appendChild(tag);
+                  });
+              }
+            });
+            
+            // Thumbnail upload
+            const thumbnailDropZone = document.getElementById('thumbnailDropZone');
+            const thumbnailInput = document.getElementById('thumbnailInput');
+            const thumbnailPreview = document.getElementById('thumbnailPreview');
+            const thumbnailUrlInput = document.getElementById('thumbnailUrl');
+            
+            thumbnailDropZone.addEventListener('click', () => thumbnailInput.click());
+            thumbnailDropZone.addEventListener('dragover', (e) => {
+              e.preventDefault();
+              thumbnailDropZone.classList.add('border-blue-500');
+            });
+            thumbnailDropZone.addEventListener('dragleave', () => {
+              thumbnailDropZone.classList.remove('border-blue-500');
+            });
+            thumbnailDropZone.addEventListener('drop', (e) => {
+              e.preventDefault();
+              thumbnailDropZone.classList.remove('border-blue-500');
+              thumbnailInput.files = e.dataTransfer.files;
+              uploadThumbnail();
+            });
+            thumbnailInput.addEventListener('change', uploadThumbnail);
+            
+            async function uploadThumbnail() {
+              if (!thumbnailInput.files[0]) return;
+              const file = thumbnailInput.files[0];
+              const formData = new FormData();
+              formData.append('image', file);
+            
+              try {
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                  method: 'POST',
+                  body: formData,
+                });
+                const data = await response.json();
+                if (data.success) {
+                  thumbnailUrlInput.value = data.data.url;
+                  thumbnailPreview.innerHTML = `
+                    <div class="relative">
+                      <img src="${data.data.url}" alt="Preview" class="w-24 h-24 object-cover rounded-md shadow">
+                      <button type="button" class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600" onclick="thumbnailInput.value=''; thumbnailUrlInput.value=''; thumbnailPreview.innerHTML=''">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  `;
+                } else {
+                  alert('Thumbnail upload failed: ' + (data.error?.message || 'Unknown error'));
+                }
+              } catch (err) {
+                alert('Thumbnail upload error: ' + err.message);
+              }
+            }
+            
+            // Extra images upload
+            const imagesDropZone = document.getElementById('imagesDropZone');
+            const imagesInput = document.getElementById('imagesInput');
+            const imagesPreview = document.getElementById('imagesPreview');
+            const imageUrlsInput = document.getElementById('imageUrls');
+            let imageUrls = [];
+            
+            imagesDropZone.addEventListener('click', () => imagesInput.click());
+            imagesDropZone.addEventListener('dragover', (e) => {
+              e.preventDefault();
+              imagesDropZone.classList.add('border-blue-500');
+            });
+            imagesDropZone.addEventListener('dragleave', () => {
+              imagesDropZone.classList.remove('border-blue-500');
+            });
+            imagesDropZone.addEventListener('drop', (e) => {
+              e.preventDefault();
+              imagesDropZone.classList.remove('border-blue-500');
+              imagesInput.files = e.dataTransfer.files;
+              uploadImages();
+            });
+            imagesInput.addEventListener('change', uploadImages);
+            
+            async function uploadImages() {
+              imagesPreview.innerHTML = '';
+              imageUrls = [];
+              const files = Array.from(imagesInput.files);
+            
+              for (const file of files) {
+                const formData = new FormData();
+                formData.append('image', file);
+                try {
+                  const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                    method: 'POST',
+                    body: formData,
+                  });
+                  const data = await response.json();
+                  if (data.success) {
+                    imageUrls.push(data.data.url);
+                    const div = document.createElement('div');
+                    div.className = 'relative';
+                    div.innerHTML = `
+                      <img src="${data.data.url}" alt="Preview" class="w-24 h-24 object-cover rounded-md shadow">
+                      <button type="button" class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600" onclick="removeImage('${data.data.url}')">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    `;
+                    imagesPreview.appendChild(div);
+                  } else {
+                    alert('Image upload failed: ' + (data.error?.message || 'Unknown error'));
+                  }
+                } catch (err) {
+                  alert('Image upload error: ' + err.message);
+                }
+              }
+              imageUrlsInput.value = imageUrls.join(',');
+            }
+            
+            function removeImage(url) {
+              imageUrls = imageUrls.filter(u => u !== url);
+              imageUrlsInput.value = imageUrls.join(',');
+              updateImagesPreview();
+            }
+            
+            function updateImagesPreview() {
+              imagesPreview.innerHTML = '';
+              imageUrls.forEach((url, index) => {
+                const div = document.createElement('div');
+                div.className = 'relative';
+                div.innerHTML = `
+                  <img src="${url}" alt="Preview" class="w-24 h-24 object-cover rounded-md shadow">
+                  <button type="button" class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600" onclick="removeImage('${url}')">
+                    <i class="fas fa-times"></i>
+                  </button>
+                `;
+                imagesPreview.appendChild(div);
+              });
+            }
+            
+            // Track deleted images
+            let deleteImages = [];
+            function addDeleteImage(url) {
+              deleteImages.push(url);
+              document.getElementById('deleteImagesInput').value = deleteImages.join(',');
+            }
+            
+            // Dynamic details
+            const detailsContainer = document.getElementById('detailsContainer');
+            document.getElementById('addDetail').addEventListener('click', () => {
+              const div = document.createElement('div');
+              div.className = 'flex items-center space-x-2 detail-row';
+              div.innerHTML = `
+                <input type="text" name="detailName[]" placeholder="Detail Name" class="flex-1 p-3 input rounded-lg">
+                <input type="text" name="detailValue[]" placeholder="Detail Value" class="flex-1 p-3 input rounded-lg">
+                <button type="button" class="bg-red-500 text-white px-3 py-2 rounded-lg hover:bg-red-600" onclick="this.parentElement.remove()">
+                  <i class="fas fa-trash"></i>
+                </button>
+              `;
+              detailsContainer.appendChild(div);
+            });
+            
+            // Form submission
+            document.getElementById('editForm').addEventListener('submit', (e) => {
+              if (!thumbnailUrlInput.value && !document.querySelector('#thumbnailPreview img')) {
+                e.preventDefault();
+                alert('Please upload a thumbnail image.');
+              }
+            });
+            </script>
+            <%- include('../partials/footer') %>
+------------------------------
+  File: login.ejs
+    Content:
+      <%- include('../partials/header') %>
+      <div class="max-w-md mx-auto py-12">
+        <h1 class="text-3xl font-bold mb-8 flex items-center justify-center">
+          <i class="fas fa-sign-in-alt mr-2"></i> <%= __('title_admin_login') %>
+        </h1>
+        <% if (error) { %>
+        <p class="text-red-600 bg-red-100 p-4 rounded-lg mb-6 flex items-center">
+          <i class="fas fa-exclamation-circle mr-2"></i> <%= error %>
+        </p>
+        <% } %>
+        <form action="/admin/login" method="POST" class="space-y-6">
+          <div>
+            <label for="username" class="block font-medium mb-1 flex items-center">
+              <i class="fas fa-user mr-1"></i> <%= __('username') %>
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              class="w-full p-3 input rounded-lg"
+              required
+            />
+          </div>
+          <div>
+            <label for="password" class="block font-medium mb-1 flex items-center">
+              <i class="fas fa-lock mr-1"></i> <%= __('password') %>
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="w-full p-3 input rounded-lg"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full btn-primary p-4 rounded-lg font-semibold flex items-center justify-center"
+          >
+            <i class="fas fa-sign-in-alt mr-2"></i> <%= __('login') %>
+          </button>
+        </form>
+      </div>
+      <%- include('../partials/footer') %>
+------------------------------
+==================================================
+
+Directory: C:\Users\user\Pictures\U's pc-build\ProffesDokon\views\partials
+  File: footer.ejs
+    Content:
+      <footer class="bg-gray-800 theme-<%= theme %> text-white py-6">
+          <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div>
+                <h3 class="text-lg font-semibold mb-4">ShopIsh</h3>
+                <p class="text-gray-400"><%= __('footer_about') %></p>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold mb-4"><%= __('footer_links') %></h3>
+                <ul class="space-y-2">
+                  <li><a href="/" class="hover:underline"><%= __('title_catalog') %></a></li>
+                  <li><a href="/cart" class="hover:underline"><%= __('title_cart') %></a></li>
+                  <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
+                    <li><a href="/admin/dashboard" class="hover:underline"><%= __('title_admin_panel') %></a></li>
+                  <% } %>
+                </ul>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold mb-4"><%= __('footer_contact') %></h3>
+                <p class="text-gray-400">Email: support@shopish.com</p>
+                <p class="text-gray-400">Phone: +1 234 567 890</p>
+              </div>
+            </div>
+            <div class="mt-6 text-center text-gray-400">
+              <p>© 2025 ShopIsh. <%= __('footer_rights') %></p>
+            </div>
+          </div>
+        </footer>
+        </main>
+        </body>
+        </html>
+------------------------------
+  File: header.ejs
+    Content:
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title><%= title %></title>
+          <link rel="stylesheet" href="/css/tailwind.css?v=<%= Date.now() %>" />
+          <link rel="stylesheet" href="/css/theme.css?v=<%= Date.now() %>" />
+          <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+          />
+          <script src="/js/script.js?v=<%= Date.now() %>" defer></script>
+        </head>
+        <body class="theme-<%= theme || 'light' %>">
+          <header class="bg-white theme-<%= theme || 'light' %> shadow">
+            <nav class="container mx-auto p-4 flex justify-between items-center">
+              <a href="/" class="text-2xl font-bold">ShopIsh</a>
+              <div class="flex items-center space-x-4">
+                <a href="/" class="hover:underline">Catalog</a>
+                <a href="/cart" class="hover:underline">Cart</a>
+                <% if (typeof user !== 'undefined' && user) { %>
+                <span class="text-gray-600"><%= user.username %></span>
+                <% if (user.role === 'admin') { %>
+                <a href="/admin/dashboard" class="hover:underline">Admin Panel</a>
+                <% } %>
+                <form action="/logout" method="POST">
+                  <button
+                    type="submit"
+                    class="btn-primary px-4 py-2 rounded-lg flex items-center"
+                  >
+                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                  </button>
+                </form>
+                <% } else { %>
+                <a href="/login" class="hover:underline">Login</a>
+                <% } %>
+                <button onclick="toggleTheme()" class="p-2 rounded">
+                  <i class="fas fa-moon"></i>
+                </button>
+              </div>
+            </nav>
+          </header>
+          <main></main>
+        </body>
+      </html>
+------------------------------
+  File: reviews.ejs
+    Content:
+      <% if (reviews && reviews.length > 0) { %>
+      <div class="space-y-4">
+        <% reviews.forEach(review => { %>
+        <div class="bg-base-200 p-4 rounded-lg shadow">
+          <p class="text-gray-400 mb-2">Product: <%= review.productName %></p>
+          <div class="flex items-center mb-2">
+            <% for(let i = 0; i < 5; i++) { %>
+            <i
+              class="fas fa-star <%= i < review.rating ? 'text-yellow-400' : 'text-gray-300' %>"
+            ></i>
+            <% } %>
+          </div>
+          <p class="text-gray-300"><%= review.comment %></p>
+        </div>
+        <% }) %>
+      </div>
+      <% } else { %>
+      <p class="text-gray-400"><%= __('no_reviews') %></p>
+      <% } %>
+------------------------------
+==================================================
+

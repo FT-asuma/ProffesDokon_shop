@@ -1,0 +1,80 @@
+<%- include('partials/header') %>
+<div
+  class="container mx-auto p-4 sm:p-6 bg-white theme-<%= theme || 'light' %> min-h-screen"
+>
+  <h1 class="text-3xl font-bold mb-6 flex items-center">
+    <i class="fas fa-store mr-2 text-blue-500"></i> Catalog
+  </h1>
+  <div class="flex flex-col sm:flex-row gap-4 mb-6 w-full">
+    <input
+      type="text"
+      id="search-input"
+      placeholder="Search products..."
+      class="flex-1 p-3 input rounded-lg"
+    />
+    <select id="category-filter" class="p-3 input rounded-lg w-full sm:w-auto">
+      <option value="">All Categories</option>
+      <% (categories || []).forEach(cat => { %>
+      <option value="<%= cat %>"><%= cat %></option>
+      <% }) %>
+    </select>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% (products || []).forEach(product => { %>
+    <div
+      class="card p-4 rounded-lg shadow-md product-item"
+      data-category="<%= product.category || 'Uncategorized' %>"
+    >
+      <a href="/product/<%= product.id %>">
+        <img
+          src="<%= product.image || 'https://via.placeholder.com/150' %>"
+          alt="<%= product.name || 'No Name' %>"
+          class="w-full h-48 object-cover rounded mb-4"
+        />
+      </a>
+      <h3 class="font-semibold text-lg mb-2">
+        <a href="/product/<%= product.id %>" class="hover:underline"
+          ><%= product.name || 'Unnamed Product' %></a
+        >
+      </h3>
+      <div class="flex items-center mb-2">
+        <% for (let i = 1; i <= 5; i++) { %>
+        <i
+          class="fas fa-star <%= i <= Math.round(product.rating || 0) ? 'text-yellow-400' : 'text-gray-300' %>"
+        ></i>
+        <% } %>
+        <span class="ml-2 text-gray-600"
+          >(<%= (product.rating || 0).toFixed(1) %>)</span
+        >
+      </div>
+      <p class="text-gray-600 mb-2">
+        <% if (product.discount && product.discount.price != null &&
+        product.discount.endDate && new Date(product.discount.endDate) > new
+        Date()) { %>
+        <span class="line-through"
+          >$<%= (product.price != null && typeof product.price === 'number' ?
+          product.price.toFixed(2) : '0.00') %></span
+        >
+        <span class="text-green-600"
+          >$<%= product.discount.price.toFixed(2) %></span
+        >
+        <span class="text-sm text-red-500 block">
+          Discount expires <%= new
+          Date(product.discount.endDate).toLocaleDateString() %>
+        </span>
+        <% } else if (product.price != null && typeof product.price ===
+        'number') { %> $<%= product.price.toFixed(2) %> <% } else { %>
+        <span class="text-red-500">Price unavailable</span>
+        <% } %>
+      </p>
+      <button
+        onclick="addToCart(<%= product.id %>)"
+        class="btn-primary w-full p-2 rounded-lg flex items-center justify-center"
+      >
+        <i class="fas fa-cart-plus mr-2"></i> Add to Cart
+      </button>
+    </div>
+    <% }) %>
+  </div>
+</div>
+<%- include('partials/footer') %>

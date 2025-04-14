@@ -1,0 +1,63 @@
+{
+  "products": [
+    {},
+    {
+      "id": 2,
+      "name": "NOODLE COOKER",
+      "category": "Noodle Cookers",
+      "price": 450,
+      "currency": "USD",
+      "availableStock": 25,
+      "description": "This noodle cooker is 90 yrs old we're short of money these days so we couldn't wait until we would celebrate its 100 yrs old jubilee and it still hutrs",
+      "image": "https://i.ibb.co/jkL5m4mh/a38f49b503df.png",
+      "images": ["https://i.ibb.co/jkL5m4mh/a38f49b503df.png"],
+      "discount": {
+        "price": 420,
+        "endDate": "2025-04-17T12:55:25.453Z"
+      },
+      "seller": {
+        "name": "Proffes Dokon Oficials",
+        "phone": "+998999879742",
+        "telegram": "@nothing",
+        "contactUrl": "idk"
+      },
+      "specifications": {
+        "kilowatts": 250,
+        "madeIn": "China",
+        "details": {
+          "Addition": "2nd hand"
+        }
+      },
+      "rating": 5.0
+    }
+  ],
+  "orders": [],
+  "users": [
+    {
+      "id": 1,
+      "username": "admin001",
+      "password": "admin_pass",
+      "role": "admin"
+    },
+    {
+      "id": 2,
+      "googleId": "111987115029041087440",
+      "name": "Ubaydulloh Sayfullayev",
+      "email": "royaleyourdad@gmail.com",
+      "picture": "https://lh3.googleusercontent.com/a/ACg8ocJSIewHTFdmx5_ppzCoFwJjZ3Tq-iCq3yUnAXenVWRBibsYApQ=s96-c",
+      "role": "user"
+    }
+  ],
+  "reviews": [
+    {},
+    {
+      "id": 2,
+      "productId": 2,
+      "userId": 2,
+      "userName": "Ubaydulloh Sayfullayev",
+      "rating": 5,
+      "comment": "hate it but sad backstory",
+      "date": "2025-04-14T12:58:27.735Z"
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+<%- include('partials/header') %>
+<div class="container mx-auto p-6 bg-white theme-<%= theme || 'light' %>">
+  <h1 class="text-3xl font-bold mb-6 flex items-center">
+    <i class="fas fa-shopping-cart mr-2 text-blue-500"></i> <%= title %>
+  </h1>
+  <% if (!cartItems || cartItems.length === 0) { %>
+  <p class="text-gray-600"><%= __('cart_empty') %></p>
+  <% } else { %>
+  <div class="space-y-4">
+    <% cartItems.forEach(item => { %> <% if (item.product && item.product.id) {
+    %>
+    <div
+      class="card p-4 rounded-lg shadow-md flex items-center justify-between"
+    >
+      <div class="flex items-center space-x-4">
+        <img
+          src="/images/<%= item.product.image || 'default.jpg' %>"
+          alt="<%= item.product.name || 'No Name' %>"
+          class="w-16 h-16 object-cover rounded"
+        />
+        <div>
+          <h3 class="font-semibold">
+            <%= item.product.name || 'Unnamed Product' %>
+          </h3>
+          <p class="text-gray-600">
+            <% if (item.product.discount && item.product.discount.price &&
+            item.product.discount.endDate && new
+            Date(item.product.discount.endDate) > new Date()) { %>
+            <span class="line-through"
+              >$<%= (item.product.price || 0).toFixed(2) %></span
+            >
+            <span class="text-green-600"
+              >$<%= item.product.discount.price.toFixed(2) %></span
+            >
+            <% } else if (item.product.price != null && typeof
+            item.product.price === 'number') { %> $<%=
+            item.product.price.toFixed(2) %> <% } else { %>
+            <span class="text-red-500"><%= __('price_unavailable') %></span>
+            <% } %>
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-4">
+        <input
+          type="number"
+          min="1"
+          max="<%= item.product.availableStock || 1 %>"
+          value="<%= item.quantity || 1 %>"
+          class="w-16 p-2 border rounded input"
+          onchange="updateQuantity(<%= item.product.id %>, this.value)"
+        />
+        <button
+          onclick="removeFromCart(<%= item.product.id %>)"
+          class="bg-red-500 text-white px-3 py-2 rounded-lg hover:bg-red-600"
+        >
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+    <% } %> <% }) %>
+  </div>
+  <% } %>
+</div>
+<%- include('partials/footer') %>
